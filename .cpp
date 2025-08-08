@@ -112,7 +112,233 @@ int main() {
     } else
         cout << *candidates.begin() << endl;
 }
+using namespace std;
+int main() {
+    int n; cin >> n;
+    map<string, int> totalScore;
+    vector<pair<string, int>> rounds(n);
+    // Read rounds and build total scores
+    for (int i = 0; i < n; ++i) {
+        string name;
+        int score;
+        cin >> name >> score;
+        rounds[i] = {name, score};
+        totalScore[name] += score;
+    }
+    // Find the maximum score
+    int maxScore = INT_MIN;
+    for (const auto& entry : totalScore) {
+        maxScore = max(maxScore, entry.second);
+    }
+    // Track players who achieved the max score
+    map<string, int> candidateScores;
+    for (const auto& entry : totalScore) {
+        if (entry.second == maxScore) {
+            candidateScores[entry.first] = 0;
+        }
+    }
+    // Replay rounds to find who reaches maxScore first
+    for (const auto& round : rounds) {
+        const string& name = round.first;
+        int score = round.second;
 
+        if (candidateScores.count(name)) {
+            candidateScores[name] += score;
+            if (candidateScores[name] >= maxScore) {
+                cout << name << endl;
+                break;
+            }
+        }
+    }
+}
+https://codeforces.com/problemset/problem/2/B
+// B. The least round way
+using namespace std;
+#define MAX 100000
+// Matrix to store the number of 2s and 5s in the prime factorization of each cell
+vector<vector<pair<int, int>>> matrix;
+// Function to count how many times `base` divides `number`
+int power(long long number, long long base) {
+    int count = 0;
+    while (number % base == 0) {
+        number /= base;
+        count++;
+    }
+    return count;
+}
+// Helper to get the power of 2 or 5 from matrix
+int get_matrix(bool use_five, int r, int c) {
+    return use_five ? matrix[r][c].second : matrix[r][c].first;
+}
+// Reconstructs the path from bottom-right to top-left
+string find_path(int r, int c, bool use_five, vector<vector<int>> &dp) {
+    string path = "";
+    while (r > 0 || c > 0) {
+        if (r > 0 && dp[r][c] - get_matrix(use_five, r, c) == dp[r - 1][c]) {
+            r--;
+            path = "D" + path;
+        } else {
+            c--;
+            path = "R" + path;
+        }
+    }
+    return path;
+}
+int main() {
+    int n; cin >> n;
+    bool has_zero = false;
+    int zero_row = -1, zero_col = -1;
+    long long k;
+    matrix.assign(n, vector<pair<int, int>>(n));
+    vector<vector<int>> dp2(n, vector<int>(n, MAX));
+    vector<vector<int>> dp5(n, vector<int>(n, MAX));
+    // Input and compute power of 2 and 5
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            scanf("%lld", &k);
+            if (k == 0) {
+                has_zero = true;
+                zero_row = i;
+                zero_col = j;
+                k = 10; // Replace 0 with 10 to simulate both 2 and 5
+            }
+            matrix[i][j] = { power(k, 2), power(k, 5) };
+        }
+    }
+    dp2[0][0] = matrix[0][0].first;
+    dp5[0][0] = matrix[0][0].second;
+    // DP to compute minimum path cost for 2s and 5s
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (i > 0) {
+                dp2[i][j] = min(dp2[i][j], dp2[i - 1][j] + matrix[i][j].first);
+                dp5[i][j] = min(dp5[i][j], dp5[i - 1][j] + matrix[i][j].second);
+            }
+            if (j > 0) {
+                dp2[i][j] = min(dp2[i][j], dp2[i][j - 1] + matrix[i][j].first);
+                dp5[i][j] = min(dp5[i][j], dp5[i][j - 1] + matrix[i][j].second);
+            }
+        }
+    }
+    int min_trailing_zeros = min(dp2[n - 1][n - 1], dp5[n - 1][n - 1]);
+    string path;
+
+    // Special case: if there's a zero in the grid, we can make the product zero (with one trailing zero)
+    if (has_zero && min_trailing_zeros > 1) {
+        min_trailing_zeros = 1;
+        // Create a path that goes through the zero cell
+        path = string(zero_col, 'R') + string(n - 1, 'D') + string(n - 1 - zero_col, 'R');
+    } else {
+        if (dp5[n - 1][n - 1] == min_trailing_zeros)
+            path = find_path(n - 1, n - 1, true, dp5);
+        else
+            path = find_path(n - 1, n - 1, false, dp2);
+    }
+    printf("%d\n", min_trailing_zeros);
+    cout << path << endl;
+}
+using namespace std;
+const int MAXN = 1010;
+int n;
+int grid[MAXN][MAXN];
+int dp[2][MAXN][MAXN];
+bool path[2][MAXN][MAXN];
+// Count powers of 2 and 5 in a number
+void countFactors(int num, int &cnt2, int &cnt5) {
+    cnt2 = cnt5 = 0;
+    while (num && num % 2 == 0) {
+        num /= 2;
+        cnt2++;
+    }
+    while (num && num % 5 == 0) {
+        num /= 5;
+        cnt5++;
+    }
+}
+// Print a path that goes through the zero cell at (x, y)
+void printZeroPath(int zeroRow, int zeroCol) {
+    cout << 1 << '\n';
+    for (int i = 1; i < zeroRow; ++i) cout << 'D';
+    for (int j = 1; j < zeroCol; ++j) cout << 'R';
+    for (int i = zeroRow; i < n; ++i) cout << 'D';
+    for (int j = zeroCol; j < n; ++j) cout << 'R';
+    cout << '\n';
+}
+int main() {
+    cin >> n;
+    int zeroRow = 0, zeroCol = 0;
+    bool hasZero = false;
+    for (int i = 1; i <= n; ++i)
+        for (int j = 1; j <= n; ++j) {
+            cin >> grid[i][j];
+            if (grid[i][j] == 0) {
+                hasZero = true;
+                zeroRow = i;
+                zeroCol = j;
+            }
+        }
+    // If start is zero, shortest path is trivial
+    if (grid[1][1] == 0) {
+        printZeroPath(1, 1);
+        return 0;
+    }
+    // Initialize DP arrays with large values
+    for (int k = 0; k < 2; ++k)
+        for (int i = 0; i <= n; ++i)
+            for (int j = 0; j <= n; ++j)
+                dp[k][i][j] = INT_MAX;
+
+    int cnt2, cnt5;
+    countFactors(grid[1][1], cnt2, cnt5);
+    dp[0][1][1] = cnt2;
+    dp[1][1][1] = cnt5;
+    for (int i = 1; i <= n; ++i)
+        for (int j = 1; j <= n; ++j)
+            if (!(i == 1 && j == 1) && grid[i][j]) {
+                countFactors(grid[i][j], cnt2, cnt5);
+                // For 2s
+                if (dp[0][i - 1][j] < dp[0][i][j - 1]) {
+                    dp[0][i][j] = dp[0][i - 1][j] + cnt2;
+                    path[0][i][j] = false; // from top (D)
+                } else {
+                    dp[0][i][j] = dp[0][i][j - 1] + cnt2;
+                    path[0][i][j] = true; // from left (R)
+                }
+                // For 5s
+                if (dp[1][i - 1][j] < dp[1][i][j - 1]) {
+                    dp[1][i][j] = dp[1][i - 1][j] + cnt5;
+                    path[1][i][j] = false; // from top (D)
+                } else {
+                    dp[1][i][j] = dp[1][i][j - 1] + cnt5;
+                    path[1][i][j] = true; // from left (R)
+                }
+            }
+    // Choose the path with fewer trailing zeros
+    int type = (dp[0][n][n] < dp[1][n][n]) ? 0 : 1;
+    int minZeros = min(dp[0][n][n], dp[1][n][n]);
+    // If zero exists and path gives more than 1 trailing zero, use zero
+    if (minZeros >= 1 && hasZero) {
+        printZeroPath(zeroRow, zeroCol);
+        return 0;
+    }
+    cout << minZeros << '\n';
+    int i = n, j = n;
+    stack<char> pathStack;
+    while (i > 1 || j > 1) {
+        if (path[type][i][j]) {
+            pathStack.push('R');
+            --j;
+        } else {
+            pathStack.push('D');
+            --i;
+        }
+    }
+    while (!pathStack.empty()) {
+        cout << pathStack.top();
+        pathStack.pop();
+    }
+    cout << '\n';
+}
 https://codeforces.com/problemset/problem/3/A
 // A. Shortest path of the king
 using namespace std;
@@ -168,6 +394,399 @@ int main(){
         cout << endl;
     }
 }
+/*
+* STATUS = ACCEPTED
+*/
+
+#include <iostream>
+#include <list>
+#include <algorithm>
+
+using namespace std;
+
+#define REPEAT(str,n) FOR(i,n) answer.push_back(str)
+#define FOR(i,n) for(int i=0; i<n; ++i)
+#define FORE(it,c) for(auto it = (c).begin(); it != (c).end(); ++it)
+
+typedef pair<int, int> square;
+
+// Read square in standard chess notation (e.g., "a1", "h8")
+void read_square(square &s) {
+    string str;
+    cin >> str;
+    s.first = str[1] - '1';     // row index (0-7)
+    s.second = str[0] - 'a';    // column index (0-7)
+}
+
+int main() {
+    square s, t;
+    list<string> answer;
+
+    read_square(s);
+    read_square(t);
+
+    // Build path step-by-step
+    while (s != t) {
+        string move = "";
+
+        if (s.first < t.first) {
+            move += 'U';
+            s.first++;
+        } else if (s.first > t.first) {
+            move += 'D';
+            s.first--;
+        }
+
+        if (s.second < t.second) {
+            move += 'R';
+            s.second++;
+        } else if (s.second > t.second) {
+            move += 'L';
+            s.second--;
+        }
+
+        answer.push_back(move);
+    }
+
+    cout << answer.size() << endl;
+    FORE(it, answer) {
+        cout << *it << endl;
+    }
+
+    return 0;
+}
+https://codeforces.com/problemset/problem/3/B
+// B. Lorry
+using namespace std;
+int main() {
+    int n, v;
+    scanf("%d%d", &n, &v);
+    vector<pair<int, int>> kayak;     // {value, index}
+    vector<pair<int, int>> catamaran; // {value, index}
+
+    // Read input boats
+    for (int i = 0; i < n; ++i) {
+        int type, value;
+        scanf("%d%d", &type, &value);
+        if (type == 1) kayak.emplace_back(value, i + 1);
+        else catamaran.emplace_back(value, i + 1);
+    }
+
+    // Sort both types in descending order of value
+    sort(kayak.rbegin(), kayak.rend());
+    sort(catamaran.rbegin(), catamaran.rend());
+
+    int best_value = 0, best_kayaks = 0, best_catamarans = 0;
+    int k = 0, c = 0, current_value = 0;
+
+    // Try maximum kayaks that fit in volume
+    k = min((int)kayak.size(), v);
+    for (int i = 0; i < k; ++i) current_value += kayak[i].first;
+
+    // Fill remaining space with catamarans
+    c = min((int)catamaran.size(), (v - k) / 2);
+    for (int i = 0; i < c; ++i) current_value += catamaran[i].first;
+
+    // Store current best
+    best_value = current_value;
+    best_kayaks = k;
+    best_catamarans = c;
+
+    // Try replacing kayaks with catamarans (while possible)
+    while (k > 0 && c < (int)catamaran.size()) {
+        --k;
+        current_value -= kayak[k].first;
+
+        if (k + (c + 1) * 2 <= v) {
+            current_value += catamaran[c].first;
+            ++c;
+        }
+
+        if (current_value > best_value) {
+            best_value = current_value;
+            best_kayaks = k;
+            best_catamarans = c;
+        }
+    }
+
+    // Output result
+    printf("%d\n", best_value);
+    for (int i = 0; i < best_kayaks; ++i) printf("%d\n", kayak[i].second);
+    for (int i = 0; i < best_catamarans; ++i) printf("%d\n", catamaran[i].second);
+
+    return 0;
+}
+https://codeforces.com/problemset/problem/3/C
+// C. Tic-tac-toe
+using namespace std;
+#define FOR(i,n) for(int i=0; i<n; ++i)
+#define SZ(c) ((int)c.size())
+
+int main()
+{
+    vector<string> board(3);
+
+    int x = 0, o = 0, x3 = 0, o3 = 0;
+
+    FOR(i,3)
+    {
+        getline(cin,board[i]);
+        FOR(j,3)
+        {
+            if(board[i][j]=='X') ++x;
+            else if(board[i][j]=='0') ++o;
+        }
+    }
+
+    FOR(i,3)
+    {
+        if(board[i][0] == board[i][1] && board[i][1] == board[i][2])
+            x3 += board[i][0]=='X', o3 += board[i][0]=='0';
+
+        if(board[0][i] == board[1][i] && board[1][i] == board[2][i])
+            x3 += board[0][i]=='X', o3 += board[0][i]=='0';
+    }
+
+    if(board[0][0] == board[1][1] && board[1][1] == board[2][2])
+        x3 += board[1][1]=='X', o3 += board[1][1]=='0';
+
+    if(board[0][2] == board[1][1] && board[1][1] == board[2][0])
+        x3 += board[1][1]=='X', o3 += board[1][1]=='0';
+
+
+    if((x - o < 0 || x - o > 1) || (x3 && o3) || (x3 && x - o != 1) || (o3 && x - o != 0))
+    {
+        printf("illegal");
+    }
+    else if(x3)
+    {
+        printf("the first player won");
+    }
+    else if(o3)
+    {
+        printf("the second player won");
+    }
+    else if(x - o == 0)
+    {
+        printf("first");
+    }
+    else if((x + o < 9) && (x - o == 1))
+    {
+        printf("second");
+    }
+    else
+    {
+        printf("draw");
+    }
+    printf("\n");
+
+    return 0;
+}
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    vector<string> board(3);
+    int xCount = 0, oCount = 0;
+    int xWins = 0, oWins = 0;
+
+    // Read board and count X and O
+    for (int i = 0; i < 3; ++i) {
+        getline(cin, board[i]);
+        for (char c : board[i]) {
+            if (c == 'X') ++xCount;
+            else if (c == '0') ++oCount;
+        }
+    }
+
+    // Check rows and columns for wins
+    for (int i = 0; i < 3; ++i) {
+        if (board[i][0] == board[i][1] && board[i][1] == board[i][2]) {
+            if (board[i][0] == 'X') ++xWins;
+            else if (board[i][0] == '0') ++oWins;
+        }
+        if (board[0][i] == board[1][i] && board[1][i] == board[2][i]) {
+            if (board[0][i] == 'X') ++xWins;
+            else if (board[0][i] == '0') ++oWins;
+        }
+    }
+
+    // Check diagonals for wins
+    if (board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
+        if (board[1][1] == 'X') ++xWins;
+        else if (board[1][1] == '0') ++oWins;
+    }
+    if (board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
+        if (board[1][1] == 'X') ++xWins;
+        else if (board[1][1] == '0') ++oWins;
+    }
+
+    // Check for illegal states
+    if (xCount < oCount || xCount - oCount > 1 || (xWins && oWins) ||
+        (xWins && xCount - oCount != 1) || (oWins && xCount != oCount)) {
+        cout << "illegal\n";
+        return 0;
+    }
+
+    // Output game result based on wins and counts
+    if (xWins) cout << "the first player won\n";
+    else if (oWins) cout << "the second player won\n";
+    else if (xCount + oCount == 9) cout << "draw\n";
+    else if (xCount == oCount) cout << "first\n";
+    else cout << "second\n";
+
+    return 0;
+}
+https://codeforces.com/problemset/problem/3/D
+// D. Least Cost Bracket Sequence
+using namespace std;
+#define FOR(i,n) for(int i=0; i<n; ++i)
+#define SZ(c) ((int)c.size())
+
+int main()
+{
+    int m = 0;
+    string pattern, str;
+
+    getline(cin, pattern);
+    m = count(pattern.begin(), pattern.end(), '?');
+
+    vector< pair<int,int> > jokers(m);
+
+    FOR(i,m)
+    {
+        getline(cin,str);
+        sscanf(str.c_str(),"%d%d",&jokers[i].first,&jokers[i].second);
+    }
+
+    vector<bool> is_joker(SZ(pattern),false);
+
+    long long sum = 0;
+    for(int i=0,j=0;i<SZ(pattern);++i)
+    {
+        if(pattern[i]=='?')
+        {
+            is_joker[i] = true;
+            pattern[i] = ')';
+            sum += jokers[j++].second;
+        }
+    }
+
+    // Greedy as suggested on multiple codeforces blog entries
+    int st = 0;
+    priority_queue< pair<int,int>, vector< pair<int,int> >, greater< pair<int,int> > > Q;
+    for(int i=0,k=0;i<SZ(pattern);++i)
+    {
+        if(is_joker[i])
+        {
+            Q.push(make_pair(jokers[k].first-jokers[k].second, i));
+            k++;
+        }
+        if(pattern[i]=='(') ++st;
+        else if(pattern[i]==')') --st;
+        if(st < 0)
+        {
+            if(!Q.empty())
+            {
+                pair<int,int> j = Q.top(); Q.pop();
+                sum += j.first;
+                pattern[j.second] = '(';
+                st += 2;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    if(st)
+    {
+        cout << "-1" << endl;
+    }
+    else
+    {
+        cout << sum << endl << pattern << endl;
+    }
+
+
+    return 0;
+}
+using namespace std;
+
+int main()
+{
+
+    string pattern;
+    getline(cin, pattern);
+
+    int jokerCount = count(pattern.begin(), pattern.end(), '?');
+    vector<pair<int, int>> jokers(jokerCount);
+
+    for (int i = 0; i < jokerCount; ++i) {
+        int costOpen, costClose;
+        scanf("%d %d", &costOpen, &costClose);
+        jokers[i] = {costOpen, costClose};
+    }
+
+    vector<bool> isJoker(pattern.size(), false);
+    long long totalCost = 0;
+    int jokerIndex = 0;
+
+    // Initially replace all '?' with ')' and add closing cost
+    for (int i = 0; i < (int)pattern.size(); ++i) {
+        if (pattern[i] == '?') {
+            isJoker[i] = true;
+            pattern[i] = ')';
+            totalCost += jokers[jokerIndex++].second;
+        }
+    }
+
+    // Priority queue to store potential cost savings if we convert ')' to '('
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+
+    int balance = 0;
+    jokerIndex = 0;
+
+    for (int i = 0; i < (int)pattern.size(); ++i) {
+        if (isJoker[i]) {
+            int diff = jokers[jokerIndex].first - jokers[jokerIndex].second;
+            pq.push({diff, i});
+            jokerIndex++;
+        }
+
+        if (pattern[i] == '(') {
+            ++balance;
+        } else {
+            --balance;
+        }
+
+        // If balance is negative, we need to flip a previously set ')' joker to '('
+        if (balance < 0) {
+            if (pq.empty()) {
+                // Not possible to fix
+                cout << "-1\n";
+                return 0;
+            }
+            auto [costDiff, pos] = pq.top();
+            pq.pop();
+
+            totalCost += costDiff;
+            pattern[pos] = '(';
+            balance += 2; // Since we changed a ')' to '(', balance increases by 2
+        }
+    }
+
+    if (balance != 0) {
+        cout << "-1\n";
+    } else {
+        cout << totalCost << "\n" << pattern << "\n";
+    }
+
+    return 0;
+}
+
 https://codeforces.com/problemset/problem/4/B
 // B. Before an Exam
 using namespace std;
