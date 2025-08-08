@@ -931,6 +931,45 @@ int main(){
 
     return 0;
 }
+/*
+* STATUS = ACCEPTED
+*/
+
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <map>
+https://codeforces.com/problemset/problem/4/C
+// C. Registration system
+using namespace std;
+int main()
+{
+    string str;
+    int n;
+    map<string,int> m;
+
+    getline(cin,str);
+    sscanf(str.c_str(),"%d",&n);
+
+    map<string,int>::iterator it;
+    for(int i=0; i<n; ++i)
+    {
+        getline(cin,str);
+        it = m.find(str);
+        if(it == m.end())
+        {
+            cout << "OK" << endl;
+            m[str] = 1;
+        }
+        else
+        {
+            cout << str << it->second << endl;
+            it->second++;
+        }
+    }
+
+    return 0;
+}
 https://codeforces.com/problemset/problem/4/D
 // D. Mysterious Present
 using namespace std;
