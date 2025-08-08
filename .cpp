@@ -900,6 +900,222 @@ int main() {
         cout << val << ' ';
     cout << '\n';
 }
+using namespace std;
+int main(){
+    int d, sum_time, lower_bound = 0, upper_bound = 0;
+    cin >> d >> sum_time;
+    vector< pair<int,int> > times(d);
+    for(int i=0,min_time,max_time; i<d; ++i)
+    {
+        cin >> min_time >> max_time;
+        times[i] = make_pair(min_time, max_time);
+        lower_bound += min_time;
+        upper_bound += max_time;
+    }
+    if(lower_bound <= sum_time && sum_time <= upper_bound){
+        printf("YES\n");
+        int r = sum_time - lower_bound;
+        for(int i=0; i<d; ++i)
+        {
+            int j = min(times[i].second - times[i].first, r);
+            if(i) printf(" ");
+            printf("%d", times[i].first + j);
+            r -= j;
+        }
+        printf("\n");
+    }
+    else
+    {
+        printf("NO");
+    }
+
+    return 0;
+}
+https://codeforces.com/problemset/problem/4/D
+// D. Mysterious Present
+using namespace std;
+#define MAX 5001
+int w[MAX], h[MAX], s[MAX], cnt[MAX], path[MAX];
+bool cmp(const int a, const int b)
+{
+    if(w[a] == w[b]) return h[a] > h[b];
+    return w[a] > w[b];
+}
+
+int main(){
+    int n, W, H; cin >> n >> W >> H;
+    for(int i=0; i<n; ++i)
+    {
+        cnt[i] = 1; path[i] = -1; s[i] = i;
+        scanf("%d%d",&w[i],&h[i]);
+    }
+    sort(s,s+n,cmp);
+    for(int i=1; i<n; ++i)
+    {
+        for(int j=0; j<i; ++j)
+        {
+            if(h[s[i]] < h[s[j]] && w[s[i]] < w[s[j]])
+            {
+                if(cnt[j] + 1 > cnt[i])
+                {
+                    cnt[i] = cnt[j] + 1;
+                    path[i] = j;
+                }
+            }
+        }
+    }
+
+    int answer = 0, best = -1;
+    for(int i=0; i<n; ++i)
+    {
+        if(H < h[s[i]] && W < w[s[i]])
+        {
+            if(cnt[i] > answer)
+            {
+                best = i;
+                answer = cnt[i];
+            }
+        }
+    }
+
+    printf("%d\n",answer);
+    if(best != -1)
+    {
+        bool y = false;
+        while(best != -1)
+        {
+            if(y) printf(" ");
+            printf("%d",s[best]+1);
+            best = path[best];
+            y = true;
+        }
+        printf("\n");
+    }
+    return 0;
+}
+#include <iostream>
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+#define MAX 5001
+
+int w[MAX], h[MAX], dp[MAX], prev[MAX], index[MAX];
+
+bool compare(int a, int b) {
+    if (w[a] == w[b]) return h[a] > h[b];
+    return w[a] > w[b];
+}
+
+int main() {
+    int n, W, H;
+    cin >> n >> W >> H;
+
+    for (int i = 0; i < n; ++i) {
+        scanf("%d%d", &w[i], &h[i]);
+        dp[i] = 1;
+        prev[i] = -1;
+        index[i] = i;
+    }
+
+    // Sort envelopes in decreasing width, and decreasing height if equal width
+    sort(index, index + n, compare);
+
+    // Dynamic Programming: find longest increasing subsequence (nested envelopes)
+    for (int i = 1; i < n; ++i) {
+        for (int j = 0; j < i; ++j) {
+            if (w[index[i]] < w[index[j]] && h[index[i]] < h[index[j]]) {
+                if (dp[j] + 1 > dp[i]) {
+                    dp[i] = dp[j] + 1;
+                    prev[i] = j;
+                }
+            }
+        }
+    }
+
+    int maxLen = 0, bestIdx = -1;
+    for (int i = 0; i < n; ++i) {
+        if (w[index[i]] > W && h[index[i]] > H && dp[i] > maxLen) {
+            maxLen = dp[i];
+            bestIdx = i;
+        }
+    }
+
+    printf("%d\n", maxLen);
+
+    if (bestIdx != -1) {
+        // Reconstruct path
+        bool first = true;
+        while (bestIdx != -1) {
+            if (!first) printf(" ");
+            printf("%d", index[bestIdx] + 1);
+            bestIdx = prev[bestIdx];
+            first = false;
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
+https://codeforces.com/problemset/problem/5/A
+// A. Chat Server's Outgoing Traffic
+using namespace std;
+#define ll(c) ((long long)c)
+int main(){
+    long long l = 0;
+    string str, msg;
+    set<string> users;
+    while(getline(cin,str)){
+        if(str[0]=='+'){
+            str[0] = '@';
+            users.insert(str);
+        }
+        else if(str[0]=='-'){
+            str[0] = '@';
+            users.erase(str);
+        }
+        else{
+            string::size_type colon = str.find(":",0);
+            if( colon != string::npos ) {
+                l += (ll(str.size()) - ll(colon) - 1LL) * ll(users.size());
+            }
+        }
+    }
+    printf("%lld\n", l);
+    return 0;
+}
+#include <iostream>
+#include <string>
+#include <set>
+
+using namespace std;
+
+int main() {
+    long long totalLength = 0;
+    string line;
+    set<string> activeUsers;
+
+    while (getline(cin, line)) {
+        if (line.empty()) continue;
+
+        if (line[0] == '+') {
+            line[0] = '@';
+            activeUsers.insert(line);
+        } else if (line[0] == '-') {
+            line[0] = '@';
+            activeUsers.erase(line);
+        } else {
+            size_t colonPos = line.find(':');
+            if (colonPos != string::npos) {
+                long long messageLength = line.size() - colonPos - 1;
+                totalLength += messageLength * activeUsers.size();
+            }
+        }
+    }
+
+    cout << totalLength << endl;
+    return 0;
+}
 
 https://codeforces.com/problemset/problem/6/A
 // A. Triangle
@@ -929,6 +1145,220 @@ int main() {
         cout << "IMPOSSIBLE" << endl;
     }
 }
+https://codeforces.com/problemset/problem/5/B
+// B. Center Alignment
+using namespace std;
+
+int main() {
+    vector<string> lines;
+    string line;
+    int maxWidth = 0;
+
+    // Read input and find maximum line width
+    while (getline(cin, line)) {
+        lines.push_back(line);
+        maxWidth = max(maxWidth, static_cast<int>(line.size()));
+    }
+
+    // Print top border
+    cout << string(maxWidth + 2, '*') << '\n';
+
+    bool toggle = false;
+    for (const string& text : lines) {
+        int spaces = maxWidth - text.size();
+        int left = (spaces + (toggle ? 1 : 0)) / 2;
+        int right = spaces - left;
+
+        cout << '*' << string(left, ' ') << text << string(right, ' ') << '*' << '\n';
+
+        if (!text.empty() && spaces % 2) {
+            toggle = !toggle;
+        }
+    }
+
+    // Print bottom border
+    cout << string(maxWidth + 2, '*') << '\n';
+
+    return 0;
+}
+https://codeforces.com/problemset/problem/5/C
+// C. Longest Regular Bracket Sequence
+using namespace std;
+
+pair<int, int> findLongestValidSubstrings(const string& s) {
+    int balance = 0;
+    set<int> cuts = {-1, static_cast<int>(s.size())};
+
+    // Left to right scan: invalid ')' → cut
+    for (int i = 0; i < s.size(); ++i) {
+        balance += (s[i] == '(') ? 1 : -1;
+        if (balance < 0) {
+            cuts.insert(i);
+            balance = 0;
+        }
+    }
+
+    // Right to left scan: invalid '(' → cut
+    balance = 0;
+    for (int i = s.size() - 1; i >= 0; --i) {
+        balance += (s[i] == ')') ? 1 : -1;
+        if (balance < 0) {
+            cuts.insert(i);
+            balance = 0;
+        }
+    }
+
+    // Count max valid segments
+    int maxLen = 0, count = 0, last = -1;
+    for (int cut : cuts) {
+        int len = cut - last - 1;
+        if (len > maxLen) {
+            maxLen = len;
+            count = 1;
+        } else if (len == maxLen && len > 0) {
+            ++count;
+        }
+        last = cut;
+    }
+
+    return {maxLen, count > 0 ? count : 1};  // Default to 1 for no valid sequence
+}
+
+int main() {
+    string sequence;
+    getline(cin, sequence);
+
+    auto [maxLength, count] = findLongestValidSubstrings(sequence);
+    cout << maxLength << " " << count << endl;
+
+    return 0;
+}
+https://codeforces.com/problemset/problem/5/C
+// C. Longest Regular Bracket Sequence
+using namespace std;
+
+pair<int, int> findLongestValidSubstrings(const string& s) {
+    int balance = 0;
+    set<int> cuts = {-1, static_cast<int>(s.size())};
+
+    // Left to right scan: invalid ')' → cut
+    for (int i = 0; i < s.size(); ++i) {
+        balance += (s[i] == '(') ? 1 : -1;
+        if (balance < 0) {
+            cuts.insert(i);
+            balance = 0;
+        }
+    }
+
+    // Right to left scan: invalid '(' → cut
+    balance = 0;
+    for (int i = s.size() - 1; i >= 0; --i) {
+        balance += (s[i] == ')') ? 1 : -1;
+        if (balance < 0) {
+            cuts.insert(i);
+            balance = 0;
+        }
+    }
+
+    // Count max valid segments
+    int maxLen = 0, count = 0, last = -1;
+    for (int cut : cuts) {
+        int len = cut - last - 1;
+        if (len > maxLen) {
+            maxLen = len;
+            count = 1;
+        } else if (len == maxLen && len > 0) {
+            ++count;
+        }
+        last = cut;
+    }
+
+    return {maxLen, count > 0 ? count : 1};  // Default to 1 for no valid sequence
+}
+
+int main() {
+    string sequence;
+    getline(cin, sequence);
+
+    auto [maxLength, count] = findLongestValidSubstrings(sequence);
+    cout << maxLength << " " << count << endl;
+
+    return 0;
+}
+/*
+* STATUS = ACCEPTED
+*/
+using namespace std;
+#define FOR(i,n)   for(int i=0; i<n; ++i)
+#define FORE(it,c) for(__typeof(c.begin()) it = c.begin(); it != c.end(); it++)
+#define SZ(c)      ((int)c.size())
+pair<int,int> solve(string sequence)
+{
+    int state = 0;
+    set<int> cuts;
+
+    cuts.insert(-1); cuts.insert(SZ(sequence));
+
+    FOR(i,SZ(sequence))
+    {
+        if(sequence[i]=='(')
+            ++state;
+        else if(sequence[i]==')')
+            --state;
+        if(state < 0)
+        {
+            cuts.insert(i);
+            state = 0;
+        }
+    }
+
+    state = 0;
+    for(int i=SZ(sequence)-1; i>=0; --i)
+    {
+        if(sequence[i]=='(') --state;
+        if(sequence[i]==')') ++state;
+        if(state < 0)
+        {
+            cuts.insert(i);
+            state = 0;
+        }
+    }
+
+    int max_length = 0, cnt = 1, last = -1;
+    FORE(it,cuts)
+    {
+        int d = *it - last - 1;
+        if(d > max_length)
+        {
+            max_length = d;
+            cnt = 1;
+        }
+        else if(d && (d == max_length))
+        {
+            ++cnt;
+        }
+        last = *it;
+    }
+
+    return make_pair(max_length, cnt);
+}
+
+int main()
+{
+    #ifndef ONLINE_JUDGE
+        freopen("longest-regular-bracket-sequence.in","r",stdin);
+    #endif
+
+    string sequence;
+    getline(cin,sequence);
+
+    pair<int,int> ans = solve(sequence);
+
+    cout << ans.first << " " << ans.second << endl;
+
+    return 0;
+}
+
 https://codeforces.com/problemset/problem/6/A
 // A. Triangle
 using namespace std;
@@ -984,6 +1414,206 @@ int main() {
     return 0;
 }
 
+
+using namespace std;
+
+#define FOR(i,n)   for(int i=0; i<n; ++i)
+#define FORI(i,a,n)   for(int i=a; i<n; ++i)
+#define SZ(c)      ((int)c.size())
+
+int main()
+{
+    #ifndef ONLINE_JUDGE
+        freopen("triangle.in","r",stdin);
+    #endif
+
+    int sides[4];
+    bool triangle = false, segment = false;
+
+    FOR(i,4) scanf("%d", &sides[i]);
+
+    FOR(i,4)
+    {
+        FORI(j, i+1, 4)
+        {
+            int low_bound = abs(sides[i] - sides[j]);
+            int upper_bound = sides[i] + sides[j];
+            FORI(k, j+1, 4)
+            {
+                if(sides[k] == low_bound || sides[k] == upper_bound)
+                    segment |= true;
+                else if(sides[k] > low_bound && sides[k] < upper_bound)
+                    triangle |= true;
+            }
+        }
+    }
+
+    if(triangle)
+        printf("TRIANGLE\n");
+    else if(segment)
+        printf("SEGMENT\n");
+    else
+        printf("IMPOSSIBLE\n");
+
+    return 0;
+}
+https://codeforces.com/problemset/problem/6/B
+// B. President's Office
+using namespace std;
+
+#define FOR(i,n)   for(int i=0; i<n; ++i)
+#define FORE(it,c) for(__typeof(c.begin()) it = c.begin(); it != c.end(); it++)
+#define SZ(c)      ((int)c.size())
+
+int main()
+{
+
+    int n, m;
+    string str, c;
+    int dir[][2] = { {0,-1}, {0,1}, {-1,0}, {1,0} };
+    set<char> deputies;
+
+    getline(cin, str);
+    istringstream strin(str);
+    strin >> n >> m >> c;
+
+    vector<string> room(n);
+
+    FOR(i,n)
+    {
+        getline(cin, room[i]);
+    }
+
+
+    FOR(i,n)
+    {
+        FOR(j,m)
+        {
+            if(room[i][j] == c[0])
+            {
+                FOR(k, 4)
+                {
+                    int ii = i + dir[k][0], jj = j + dir[k][1];
+                    if((ii >= 0) && (ii < n) && (jj >= 0) && (jj < m))
+                    {
+                        if(room[ii][jj] != c[0] && room[ii][jj] != '.')
+                        {
+                            deputies.insert(room[ii][jj]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    printf("%d\n", deputies.size());
+
+    return 0;
+}
+
+using namespace std;
+int main() {
+    int n, m;
+    char president;
+    string line;
+
+    getline(cin, line);
+    stringstream(line) >> n >> m >> president;
+
+    vector<string> room(n);
+    for (int i = 0; i < n; ++i)
+        getline(cin, room[i]);
+
+    set<char> deputies;
+    int dx[] = {0, 0, -1, 1}, dy[] = {-1, 1, 0, 0};
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            if (room[i][j] != president) continue;
+            for (int d = 0; d < 4; ++d) {
+                int ni = i + dx[d], nj = j + dy[d];
+                if (ni >= 0 && ni < n && nj >= 0 && nj < m) {
+                    char neighbor = room[ni][nj];
+                    if (neighbor != president && neighbor != '.')
+                        deputies.insert(neighbor);
+                }
+            }
+        }
+    }
+
+    cout << deputies.size() << endl;
+    return 0;
+}
+
+https://codeforces.com/problemset/problem/6/C
+// C. Alice, Bob and Chocolate
+using namespace std;
+
+#define FOR(i,n)   for(int i=0; i<n; ++i)
+#define FORI(i,a,n)   for(int i=a; i<n; ++i)
+#define SZ(c)      ((int)c.size())
+
+int main()
+{
+
+    int n, time;
+
+    scanf("%d", &n);
+
+    vector<int> chocolates(n + 2, 0);
+
+    FORI(i, 1, n+1)
+    {
+        scanf("%d", &time);
+        chocolates[i] = chocolates[i-1] + time;
+    }
+    chocolates[n+1] = chocolates[n];
+
+
+    int left = 0, right = n + 1;
+
+    while(right > left)
+    {
+        int alice = chocolates[left], bob = chocolates[n+1] - chocolates[right];
+        if((alice < bob) || (alice == bob))
+        {
+            left++;
+        }
+        else if(bob < alice)
+        {
+            right--;
+        }
+    }
+
+    printf("%d %d\n", left, n - left);
+
+    return 0;
+}
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+
+    int n;
+    cin >> n;
+    vector<int> choco(n);
+    for (int &time : choco) cin >> time;
+
+    int left = 0, right = n - 1;
+    int t_alice = 0, t_bob = 0;
+
+    while (left <= right) {
+        if (t_alice <= t_bob)
+            t_alice += choco[left++];
+        else
+            t_bob += choco[right--];
+    }
+
+    cout << left << " " << n - left << endl;
+    return 0;
+}
 
 #include <iostream>
 #include <vector>
