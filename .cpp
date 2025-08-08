@@ -2254,6 +2254,55 @@ int main() {
     cout << leader << endl;
     return 0;
 }
+https://codeforces.com/problemset/problem/74/A
+// A. Room Leader
+using namespace std;
+int main(){
+    int n, p, m, a, b, c, d, e;
+    string s,t;
+    map <string, int> mp;
+    map <string,int>:: iterator itr;
+    int score = 0;
+    int n; cin >> n;
+    for(int i = 0; i < n; i++){
+        cin >> s >> p >> m >> a >> b >> c >> d >> e;
+        score = ((p * 100) + ( a + b + c + d + e)) - (m * 50);
+        mp[s] = score;
+    }
+    int maxScore = -100000,temp = 0;
+    for(itr = mp.begin(); itr!= mp.end(); itr++){
+        temp = itr->second;
+        if(temp > maxScore){
+            maxScore = temp;
+            t = itr->first;
+        }
+        else if(temp < 0){
+            if(maxScore < 0 && temp > maxScore){
+                maxScore = temp;
+                t = itr->first;
+            }
+        }
+    }
+    cout << t << endl;
+}
+using namespace std;
+int main() {
+    int n; cin >> n;
+    string name, bestName;
+    int maxScore = INT_MIN;
+    for (int i = 0; i < n; ++i) {
+        int p, m, a, b, c, d, e;
+        cin >> name >> p >> m >> a >> b >> c >> d >> e;
+        int score = (p * 100 + a + b + c + d + e) - (m * 50);
+        if (score > maxScore) {
+            maxScore = score;
+            bestName = name;
+        }
+    }
+    cout << bestName << '\n';
+    return 0;
+}
+
 https://codeforces.com/contest/75/problem/A
 // A. Life Without Zeros
 using namespace std;
@@ -2349,6 +2398,49 @@ int main()
     cout << (A + B == C ? "YES" : "NO") << endl;
     return 0;
 }
+using namespace std;
+int removezeros(int num){
+    int retrn = 0, ten = 1;
+    while(num){
+        int mod = num % 10;
+        num /= 10;
+        if(mod){
+            retrn += mod * ten;
+            ten *= 10;
+        }
+    }
+    return retrn;
+}
+int main(){
+    int a, b; cin >> a >> b;
+    int c = a + b;
+    a = removezeros(a);
+    b = removezeros(b);
+    c = removezeros(c);
+    cout << (a + b == c) ? "YES" : "NO";
+}
+using namespace std;
+int removeZeros(int num) {
+    int result = 0, place = 1;
+    while (num) {
+        int digit = num % 10;
+        if (digit) {
+            result += digit * place;
+            place *= 10;
+        }
+        num /= 10;
+    }
+    return result;
+}
+int main() {
+    int a, b; cin >> a >> b;
+    int c = a + b;
+    if (removeZeros(a) + removeZeros(b) == removeZeros(c))
+        cout << "YES\n";
+    else
+        cout << "NO\n";
+}
+
 #include <iostream>
 #include <string>
 https://codeforces.com/problemset/problem/78/A
@@ -2397,6 +2489,89 @@ int main(){
     cout << (haiku ? "YES" : "NO") << endl;
     return 0;
 }
+using namespace std;
+int main(){
+    int n = 3, first = 0,second = 0, third = 0;
+    for(int j = 1; j <= n; j++){
+        string s;
+        getline(cin,s);
+        for(int i = 0; i < s.length(); i++){
+            if(isalpha(s[i])){
+                if(s[i] == 'a' || s[i] == 'e' || s[i] == 'i' || s[i] == 'o' || s[i] == 'u'){
+                    if(j == 1)    first++;
+
+                    else if(j == 2)    second++;
+                    else if(j == 3)    third++;
+                }
+            }
+        }
+    }
+    if( (first == 5 && second == 7) && (third == 5) )
+        cout << "YES";
+    else    cout<<"NO";
+    cout << endl;
+    return 0;
+}
+using namespace std;
+int count_vowels(const string &s) {
+    int count = 0;
+    for (char c : s) {
+        c = tolower(c);
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
+            count++;
+    }
+    return count;
+}
+int main() {
+    string line;
+    int expected[3] = {5, 7, 5};
+    for (int i = 0; i < 3; ++i) {
+        getline(cin, line);
+        if (count_vowels(line) != expected[i]) {
+            cout << "NO\n";
+            return 0;
+        }
+    }
+    cout << "YES\n";
+    return 0;
+}
+
+https://codeforces.com/problemset/problem/78/B
+// B. Easter Eggs
+using namespace std;
+int main() {
+    int n; cin >> n;
+    string base = "ROYGBIV";
+    string extra = "GBIV"; 
+    string result;
+    result += string(n / 7, ' ');
+    for (int i = 0; i < n / 7; ++i)
+        result += base;
+    for (int i = 0; i < n % 7; ++i)
+        result += extra[i];
+    cout << result << endl;
+}
+using namespace std;
+int main(){
+    int n; cin >> n;
+    string s[] = {"R","O","Y","G","B","I","V"};
+    string t;
+    int div = n/7;
+    while(div--){
+        for(int i = 0; i < 7; i++){
+            t += s[i];
+        }
+    }
+    if(n % 7 == 1)    t += "G";
+    else if(n % 7 == 2)    t += "GB";
+    else if(n % 7 == 3)    t += "YGB";
+    else if(n % 7 == 4)    t += "YGBI";
+    else if(n % 7 == 5)    t += "OYGBI";
+    else if(n % 7 == 6)    t += "OYGBIV";
+    cout << t << endl;
+    return 0;
+}
+
 https://codeforces.com/problemset/problem/79/A
 // A. Bus Game
 using namespace std;
