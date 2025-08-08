@@ -263,6 +263,61 @@ int main() {
         cout << "IMPOSSIBLE" << endl;
     }
 }
+https://codeforces.com/problemset/problem/6/A
+// A. Triangle
+using namespace std;
+bool tri(int a, int b, int c){
+    return ((a + b > c) && (a + c > b) && (b + c > a) );
+}
+bool seg(int a, int b, int c){
+    return ( (a == b + c) || (b == a + c) || (c == a + b));
+}
+int main(){
+    int a, b, c, d; cin >> a >> b >> c >> d;
+    bool triangle = false;
+    bool segment = false;
+    triangle = triangle || (tri(a,b,c));
+    triangle = triangle || (tri(a,b,d));
+    triangle = triangle || (tri(a,c,d));
+    triangle = triangle || (tri(b,c,d));
+    
+    segment = segment || (seg(a,b,c));
+    segment = segment || (seg(a,b,d));
+    segment = segment || (seg(a,c,d));
+    segment = segment || (seg(b,c,d));
+
+    if(triangle)    cout << "TRIANGLE" << endl;
+    else if(segment)    cout << "SEGMENT" << endl;
+    else    cout << "IMPOSSIBLE" << endl;
+}
+using namespace std;
+bool isTriangle(int a, int b, int c) {
+    return (a + b > c) && (a + c > b) && (b + c > a);
+}
+bool isSegment(int a, int b, int c) {
+    return (a + b == c) || (a + c == b) || (b + c == a);
+}
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int a, b, c, d; cin >> a >> b >> c >> d;
+    vector<int> sides = {a, b, c, d};
+    bool triangle = false, segment = false;
+    for (int i = 0; i < 4; ++i) {
+        for (int j = i + 1; j < 4; ++j) {
+            for (int k = j + 1; k < 4; ++k) {
+                int x = sides[i], y = sides[j], z = sides[k];
+                if (isTriangle(x, y, z)) triangle = true;
+                else if (isSegment(x, y, z)) segment = true;
+            }
+        }
+    }
+    if (triangle) cout << "TRIANGLE\n";
+    else if (segment) cout << "SEGMENT\n";
+    else cout << "IMPOSSIBLE\n";
+    return 0;
+}
+
 
 #include <iostream>
 #include <vector>
