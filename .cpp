@@ -317,6 +317,46 @@ int main(){
     cout << answer;
     return 0;
 }
+https://codeforces.com/problemset/problem/9/A
+// A. Die Roll
+using namespace std;
+int main(){
+    int a, b; cin >> a >> b;
+    if(a < b)
+        swap(a,b);
+    int c = 0;
+    for(int i = a; i <= 6; i++)
+        c++;
+    int dot = c/6;
+    if(dot == 1)    cout << "1/1" << endl;
+    else{
+        if(c == 0)    cout << "0/1" << endl;
+        else if(c == 1)    cout << "1/6" << endl;
+        else if(c == 2)    cout << "1/3" << endl;
+        else if(c == 3)    cout << "1/2" << endl;
+        else if(c == 4)    cout << "2/3" << endl;
+        else if(c == 5)    cout << "5/6" << endl;
+    }
+    return 0;
+}
+using namespace std;
+int main() {
+    int a, b; cin >> a >> b;
+    int maxVal = max(a, b);
+    int favorable = 6 - maxVal + 1;
+    switch (favorable) {
+        case 0: cout << "0/1"; break;
+        case 1: cout << "1/6"; break;
+        case 2: cout << "1/3"; break;
+        case 3: cout << "1/2"; break;
+        case 4: cout << "2/3"; break;
+        case 5: cout << "5/6"; break;
+        case 6: cout << "1/1"; break;
+    }
+    cout << endl;
+    return 0;
+}
+
 https://codeforces.com/problemset/problem/9/B
 // B. Running Student
 using namespace std;
@@ -2815,6 +2855,26 @@ int main() {
             count = 1;
     }
     cout << "NO" << endl;
+}
+using namespace std;
+int main(){
+    string s; cin >> s;
+    int n = s.length();
+    int zero = 0, one = 0;
+    for(int i = 0; i < n; i++){
+        if(s[i] == '0'){
+            zero++;
+            one = 0;
+        }
+        else if(s[i] == '1'){
+            one++;
+            zero = 0;
+        }
+        if(zero >= 7 || one >=7){
+            break;
+        }
+    }
+    cout << (one >= 7 || zero >= 7)? "YES" : "NO";
 }
 // Football
 #include <bits\stdc++.h>
