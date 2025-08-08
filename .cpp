@@ -469,6 +469,48 @@ int main(){
     }
     cout << moves;
 }
+using namespace std;
+int main(){
+    int n, d; cin >> n >> d;
+    int a[2001];
+    for(int i = 0; i < n; i++)    cin >> a[i];
+    int ans = 0, div = 0, sub = 0;
+    for(int i = 1; i < n; i++){
+        if(a[i-1] >= a[i]){
+            sub = a[i-1] - a[i];
+            if(sub == 0){
+                ans++;
+                a[i] += d;
+            }
+            else{
+                sub++;
+                div = sub / d;
+                if(sub % d != 0)    div++;
+                a[i] += div * d;
+                ans += div;
+            }
+        }
+    }
+    cout << ans << endl;
+}
+using namespace std;
+int main(){
+    int n, d; cin >> n >> d;
+    vector <int a(n);
+    for (int &x : a) cin >> x;
+    int operations = 0;
+    for (int i = 1; i < n; i++) {
+        if (a[i] <= a[i - 1]) {
+            ll diff = a[i - 1] - a[i] + 1;
+            ll steps = (diff + d - 1) / d; 
+            a[i] += steps * d;
+            operations += steps;
+        }
+    }
+    cout << operations << '\n';
+    return 0;
+}
+
 https://codeforces.com/problemset/problem/12/A
 // A. Super Agent
 using namespace std;
@@ -719,7 +761,126 @@ int main() {
     cout << totalValue << "\n";
     return 0;
 }
+https://codeforces.com/problemset/problem/17/A
+// A. Noldbach problem
+using namespace std;
+int main() {
+    int n, k; cin >> n >> k;
+    const int MAX = 1001;
+    vector<bool> is_prime(MAX, true);
+    is_prime[0] = is_prime[1] = false;
+    for (int i = 2; i * i < MAX; i++) {
+        if (is_prime[i]) {
+            for (int j = i * i; j < MAX; j += i) {
+                is_prime[j] = false;
+            }
+        }
+    }
+    vector<int> primes;
+    for (int i = 2; i < MAX; i++) {
+        if (is_prime[i]) primes.pb(i);
+    }
+    int count = 0;
+    for (int i = 0; i < primes.size() - 1; i++) {
+        int special = 1 + primes[i] + primes[i + 1];
+        if (special <= n && is_prime[special]) {
+            count++;
+        }
+    }
+    cout << (count >= k ? "YES" : "NO") << endl;
+}
+using namespace std;
+int main(){
+    int n, k; cin >> n >> k;
+    int m = 1001;
+    bool prime[m+1];
+    memset(prime, true, sizeof(prime));
+    for(int p = 2; p*p <= m; p++){
+        if(prime[p] == true){
+            for(int i = p*p; i < m; i += p)
+                prime[i] = false;
+        }
+    }
+    vector <int> v;
+    vector <int> ::iterator itr;
+    for(int i = 2; i < m; i++){
+       if(prime[i]){
+            v.push_back(i);
+       }
+    }
+    int sum = 0;
+    vector <int> have;
+    for(int i = 0; i < v.size() - 1; i++){
+        sum = 1 + (v[i] + v[i+1]);
+        itr = find(v.begin(), v.end(), sum);
+        if(itr != v.end()){
+            have.push_back(sum);
+        }
+    }
+    int c = 0;
+    for(int i = 0; i < have.size(); i++){
+        if(have[i] <= n)    c++;
+        else    break;
+    }
+    if(c >= k){
+        cout<<"YES"<<endl;
+    }
+    else{
+        cout<<"NO"<<endl;
+    }
+    if(c >= k)    cout << "YES";
+    else    cout << "NO";
+    return 0;
+}
 
+https://codeforces.com/problemset/problem/20/C
+// C. Dijkstra?
+using namespace std;
+typedef long long ll;
+const ll INF = 1e18;
+int n, m;
+ll d[100005], p[100005];
+map<pair<int, int>, ll> mp;
+vector<int> adj[100005];
+priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<>> pq;
+void printPath(int node) {
+    if (node != 1)
+        printPath(p[node]);
+    cout << node << ' ';
+}
+int main() {
+    cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        int a, b;
+        ll w;
+        cin >> a >> b >> w;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+        mp[{a, b}] = w;
+        mp[{b, a}] = w;
+    }
+    for (int i = 2; i <= n; i++)
+        d[i] = INF;
+    d[1] = 0;
+    pq.push({0, 1});
+    while (!pq.empty()) {
+        auto [dist_u, u] = pq.top();
+        pq.pop();
+        if (dist_u > d[u]) continue;
+        for (int v : adj[u]) {
+            ll weight = mp[{u, v}];
+            if (d[u] + weight < d[v]) {
+                d[v] = d[u] + weight;
+                p[v] = u;
+                pq.push({d[v], v});
+            }
+        }
+    }
+    if (d[n] == INF)
+        cout << -1 << endl;
+    else
+        printPath(n);
+}
 #include <cstdio>
 #include <algorithm>
 https://codeforces.com/problemset/problem/22/A
@@ -781,6 +942,46 @@ int main() {
     } else cout << "NO\n";
     return 0;
 }
+using namespace std;
+int main(){
+    int a;
+    set <int> s;
+    int n; cin >> n;
+    for(int i = 0; i < n; i++){
+        cin >> a;
+        s.insert(a);
+    }
+    if(s.size() < 2)    cout << "NO\n";
+    else {
+        set<int> ::iterator it;
+        int c = 0;
+        for(it = s.begin(); it != s.end(); it++){
+            if(c == 1){
+                cout << *it << endl;
+                break;
+            }
+            c++;
+        }
+    }
+}
+using namespace std;
+int main() {
+    int n, a;
+    set <int> s;
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> a;
+        s.insert(a);
+    }
+    if (s.size() < 2)
+        cout << "NO" << endl;
+    else {
+        auto it = s.begin();
+        advance(it, 1);
+        cout << *it << endl;
+    }
+}
+
 https://codeforces.com/problemset/problem/23/A
 // A. You're Given a String...
 using namespace std;
@@ -1069,6 +1270,39 @@ int main() {
     cout << (ways * 2) << '\n';
 }
 using namespace std;
+int main(){
+    int c = 0;
+    int n, d; cin >> n >> d;
+    int a[n + 5];
+    for(int i = 0; i < n; i++)    cin >> a[i];
+    sort(a, a + n);
+    for(int i = 0; i < n; i++){
+        for(int j = i + 1; j < n; j++){
+            if(a[j] - a[i] > d)    break;
+            c++;
+        }
+    }
+    cout << c * 2 << endl;
+    return 0;
+}
+using namespace std;
+int main() {
+    int n, d, count = 0;
+    cin >> n >> d;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++)
+        cin >> a[i];
+    sort(a.begin(), a.end());
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (a[j] - a[i] > d) break;
+            count++;
+        }
+    }
+    cout << count * 2 << endl;
+}
+
+using namespace std;
 http://codeforces.com/problemset/problem/32/B
 // B. Borze
 int main() {
@@ -1130,6 +1364,41 @@ int main() {
     }
     cout << ans;
 }
+using namespace std;
+int main(){
+    string s; cin >> s;
+    int len = s.length();
+    int a[len + 5];
+    for(int i = 0; i < len; i++){
+        if(s[i] == '.')    cout << 0;
+        else{
+            if(s[i + 1] == '.')    cout << 1;
+            else{
+                cout << 2;
+                i++;
+            }
+        }
+    }
+    cout << endl;
+}
+using namespace std;
+int main() {
+    string s; cin >> s;
+    int len = s.length();
+    for (int i = 0; i < len; i++) {
+        if (s[i] == '.')
+            cout << 0;
+        else
+            if (i + 1 < len && s[i + 1] == '.')
+                cout << 1;
+            else {
+                cout << 2;
+                i++;
+            }
+        }
+    }
+    cout << endl;
+}
 
 https://codeforces.com/problemset/problem/34/A
 // A. Reconnaissance 2
@@ -1174,6 +1443,46 @@ int main(){
     }
     cout << index1 << " " << index2 << endl;
 }
+using namespace std;
+int main(){
+    int a[101], b[101];
+    int n; cin >> n;
+    for(int i = 0; i < n; i++)    cin >> a[i];
+    int m = 1001, d = 0;
+    d = abs(a[0] - a[n-1]);
+    m = min(m,d);
+    int idx1 = 1,idx2 = n;
+    for(int i=0; i<n; i++){
+        d = abs(a[i] - a[i+1]);
+        if(m > d){
+            m = d;
+            idx1 = i+1;
+            idx2 = i+2;
+        }
+    }
+    cout << idx1 << " " << idx2 << endl;
+    return 0;
+}
+using namespace std;
+int main() {
+    int n; cin >> n;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++)
+        cin >> a[i];
+    int min_diff = abs(a[0] - a[n - 1]);
+    int idx1 = 1, idx2 = n;
+    for (int i = 0; i < n - 1; i++) {
+        int diff = abs(a[i] - a[i + 1]);
+        if (diff < min_diff) {
+            min_diff = diff;
+            idx1 = i + 1;
+            idx2 = i + 2;
+        }
+    }
+    cout << idx1 << " " << idx2 << '\n';
+    return 0;
+}
+
 https://codeforces.com/problemset/problem/34/B
 // B. Sale
 using namespace std;
@@ -1200,6 +1509,39 @@ int main() {
         savings -= prices[i];
     cout << savings << endl;
     return 0;
+}
+using namespace std;
+int main(){
+    int a, n, m; cin >> n >> m;
+    vector <int> v;
+    for(int i = 0; i < n; i++){
+        cin >> a;
+        if(a < 0)    v.push_back(a);
+    }
+    sort(v.begin(), v.end());
+    n = v.size();
+    if(n > m)    swap(n, m);
+    int sum = 0;
+    for(int i = 0; i < n; i++)
+        sum += (v[i] * -1);
+    cout << sum << endl;
+    return 0;
+}
+using namespace std;
+int main() {
+    int n, m; cin >> n >> m;
+    vector<int> negative_values;
+    for (int i = 0; i < n; i++) {
+        int a; cin >> a;
+        if (a < 0) negative_values.push_back(a);
+    }
+    sort(negative_values.begin(), negative_values.end()); 
+    int sum = 0;
+    int take = min((int)negative_values.size(), m);
+    for (int i = 0; i < take; i++) {
+        sum -= negative_values[i];
+    }
+    cout << sum << '\n';
 }
 
 https://codeforces.com/problemset/problem/35/A
@@ -1272,6 +1614,31 @@ int main(){
     cout << accumulate(d + a, d + b, 0) << endl;
     return 0;
 }
+using namespace std;
+int main(){
+    int sum = 0, n; cin >> n;
+    int p[n];
+    for(int i = 0; i < n - 1; i++)    cin >> p[i];
+    int a, b; cin >> a >> b;
+    a--;
+    b--;
+    for(int i = a; i < b; i++)    sum += p[i];
+    cout << sum << endl;
+}
+using namespace std;
+int main() {
+    int n, a, b; cin >> n;
+    vector<int> p(n - 1);
+    for (int i = 0; i < n - 1; i++)
+        cin >> p[i];
+    cin >> a >> b;
+    int sum = 0;
+    for (int i = a - 1; i < b - 1; i++)
+        sum += p[i];
+    cout << sum << endl;
+    return 0;
+}
+
 https://codeforces.com/problemset/problem/40/A
 // A. Find Color
 using namespace std;
@@ -1328,6 +1695,23 @@ int main() {
         cout << "NO";
 
     return 0;
+}
+using namespace std;
+int main(){
+    int tag = 0;
+    string x, y; cin >> x >> y;
+    cin >> x >> y;
+    int len = x.length();
+    int len2 = y.length();
+    for(int i = 0, j = len2 - 1; i < len, j >= 0; i++, j--){
+        if(x[i] == y[j])    tag = 1;
+        else{
+            tag = 0;
+            break;
+        }
+    }
+    if(tag == 1)    cout << "YES" << endl;
+    else    cout << "NO" << endl;
 }
 using namespace std;
 https://codeforces.com/contest/43/problem/B
@@ -1476,6 +1860,147 @@ int main() {
     cout << winner << '\n';
     return 0;
 }
+
+using namespace std;
+int main() {
+    int n; cin >> n;
+    map<string, int> freq;
+    string s, result;
+    int maxFreq = 0;
+    for (int i = 0; i < n; ++i) {
+        cin >> s;
+        freq[s]++;
+        if (freq[s] > maxFreq) {
+            maxFreq = freq[s];
+            result = s;
+        }
+    }
+    cout << result << '\n';
+    return 0;
+}
+using namespace std;
+int main(){
+    int n; cin >> n;
+    map <string, int> mp;
+    string s;
+    for(int i = 0; i < n; i++){
+        cin >> s;
+        mp[s]++;
+    }
+    int c = 0, d = 0;
+    string t;
+    map <string,int> ::iterator itr;
+    for(itr = mp.begin(); itr!=mp.end(); itr++){
+        c = itr->second;
+        if(c > d){
+            d = c;
+            t = itr->first;
+        }
+    }
+    cout << t << endl;
+}
+https://codeforces.com/problemset/problem/43/B
+// B. Letter
+using namespace std;
+int main(){
+    string s1, s2;
+    getline(cin, s1);
+    getline(cin, s2);
+    int l1 = s1.length();
+    int l2 = s2.length();
+    string s, t;
+    for(int i = 0; i < l1; i++){
+        if(isalpha(s1[i])){
+            s += s1[i];
+        }
+    }
+    for(int i = 0; i < l2; i++){
+        if(isalpha(s2[i])){
+            t += s2[i];
+        }
+    }
+    l1 = s.length();
+    l2 = t.length();
+    int Found = 0;
+    bool flag = false;
+    for(int i = 0; i < l2; i++){
+        for(int j = 0; j < l1; j++){
+            if(isalpha(s[j])){
+                if(t[i] == s[j]){
+                    Found = 1;
+                    s[j] = '_';
+                    t[i] = '+';
+                    break;
+                }
+            }
+        }
+        if(Found == 1)    flag = true;
+        else{
+            flag = false;
+            break;
+        }
+    }
+    for(int i = 0; i < l2; i++){
+        if(isalpha(t[i])){
+            flag = false;
+            break;
+        }
+    }
+    if(flag)    cout << "YES" << endl;
+    else    cout << "NO" << endl;
+    return 0;
+}
+using namespace std;
+int main() {
+    string s1, s2;
+    getline(cin, s1);
+    getline(cin, s2);
+    map <char, int> available;
+    for (char ch : s1) {
+        if (isalpha(ch)) {
+            available[ch]++;
+        }
+    }
+    bool possible = true;
+    for (char ch : s2) {
+        if (isalpha(ch)) {
+            if (available[ch] == 0) {
+                possible = false;
+                break;
+            }
+            available[ch]--;
+        }
+    }
+    cout << (possible ? "YES" : "NO") << '\n';
+    return 0;
+}
+
+https://codeforces.com/problemset/problem/44/A
+// A. Indian Summer
+using namespace std;
+int main(){
+    int n; cin >> n;
+    string a, b, c;
+    set <string> s;
+    while(n--){
+        cin >> a >> b;
+        c = b + a;
+        s.insert(c);
+    }
+    cout << s.size() << endl;
+}
+using namespace std;
+int main(){
+    int n; cin >> n;
+    set<string> uniquePairs;
+    while (n--) {
+        string first, second; cin >> first >> second;
+        uniquePairs.insert(second + first);
+    }
+    cout << uniquePairs.size() << "\n";
+    return 0;
+}
+
 https://codeforces.com/problemset/problem/46/A
 // A. Ball Game
 using namespace std;
@@ -1491,6 +2016,35 @@ int main(){
     cout << endl;
     return 0;
 }
+using namespace std;
+int main(){
+    int n; cin >> n;
+    int N = n;
+    n -= 1;
+    int go = 1, i = 1;
+    while(n--){
+        go += i;
+        if(go % N == 0) go = go;
+        else    go %= N;
+        cout << go << " ";
+        i++;
+    }
+    cout << endl;
+    return 0;
+}
+using namespace std;
+int main() {
+    int n; cin >> n;
+    int pos = 1;
+    for (int step = 1; step < n; ++step) {
+        pos += step;
+        pos %= n;
+        if (pos == 0) pos = n;
+        cout << pos << " ";
+    }
+    cout << "\n";
+}
+
 https://codeforces.com/problemset/problem/47/A
 // 47A - Triangular numbers
 using namespace std;
@@ -1522,6 +2076,17 @@ int main(){
     int n; cin >> n;
     cout << (isTriangular(n))? "YES" : "NO";
 }
+using namespace std;
+bool isTriangular(int num) {
+    int val = 8 * num + 1;
+    int root = sqrt(val);
+    return (root * root == val);
+}
+int main() {
+    int n; cin >> n;
+    cout << (isTriangular(n) ? "YES" : "NO") << endl;
+}
+
 using namespace std;
 http://codeforces.com/contest/47/problem/B
 // 47B. Coins;
@@ -1646,6 +2211,24 @@ int main() {
     }
     cout << (isVowel(lastAlpha) ? "YES" : "NO") << endl;
 }
+#include <bits/stdc++.h>
+using namespace std;
+int main() {
+    string s;
+    getline(cin, s);
+    for (int i = s.size() - 1; i >= 0; i--) {
+        if (isalpha(s[i])) {
+            char ch = tolower(s[i]);
+            if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u' || ch == 'y')
+                cout << "YES" << endl;
+            else
+                cout << "NO" << endl;
+            return 0;
+        }
+    }
+
+    return 0;
+}
 
 https://codeforces.com/problemset/problem/50/A
 // A. Domino piling
@@ -1661,6 +2244,39 @@ int main(){
     int m, n; cin >> m >> n;
     cout << (m * n) / 2;
 }
+https://codeforces.com/problemset/problem/52/A
+// A. 123-sequence
+using namespace std;
+int main(){
+    int n, a; cin >> n;
+    int one = 0, two = 0, three = 0;
+    for(int i = 0; i < n; i++){
+        cin >> a;
+        if(a == 1)    one++;
+        else if(a == 2)    two++;
+        else    three++;
+    }
+    int m = 0, ans = 0;
+    m = max(one, max(two,three));
+    ans = (one + two + three);
+    ans = abs(m - ans);
+    cout << ans << endl;
+}
+using namespace std;
+int main(){
+    int n, x; cin >> n;
+    int one = 0, two = 0, three = 0;
+    for (int i = 0; i < n; i++) {
+        cin >> x;
+        if (x == 1) one++;
+        else if (x == 2) two++;
+        else if (x == 3) three++;
+    }
+    int teams = min({one, two, three});
+    cout << teams << endl;
+    return 0;
+}
+
 https://codeforces.com/problemset/problem/53/A
 // A. Autocomplete
 using namespace std;
@@ -1761,6 +2377,31 @@ int main() {
     }
     cout << (c == (int)h.size() ? "YES" : "NO") << "\n";
 }
+using namespace std;
+int main(){
+    string s; cin >> s;
+    string target = "hello";
+    int n = s.length(), k = 0;
+    for(int i = 0; i < n; i++) {
+        if(s[i] == target[k])    k++;
+    }
+    if(k == target.length())    cout << "YES" << endl;
+    else    cout << "NO" << endl;
+}
+using namespace std;
+int main() {
+    string s; cin >> s;
+    string target = "hello";
+    int k = 0;
+    for (char ch : s) {
+        if (ch == target[k]) {
+            k++;
+            if (k == target.size()) break;
+        }
+    }
+    cout << (k == target.size() ? "YES" : "NO") << endl;
+}
+
 #include <iostream>
 https://codeforces.com/problemset/problem/58/B
 // B. Coins
@@ -1819,6 +2460,20 @@ int main() {
         }
     }
     cout << 1 << '\n';
+}
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+
+    for (int i = n; i >= 1; i--) {
+        if (n % i == 0)
+            cout << i << " ";
+    }
+
+    return 0;
 }
 
 using namespace std;
@@ -1899,6 +2554,39 @@ int main() {
     cout << s << '\n';
 }
 using namespace std;
+int main(){
+    int upcase=0, lowcase=0, findA = 0, finda = 0;
+    string x; cin >> x;
+    int len = x.length();
+    for(int i = 0; i < len; i++){
+        if(x[i] >= 'a' && x[i] <= 'z') lowcase++;
+        else    upcase++;
+    }
+    int findA = len - lowcase;
+    int finda = len - upcase;
+    if((findA == finda) || (finda >= findA))
+        transform(x.begin(), x.end(), x.begin(), :: tolower);
+    else
+        transform(x.begin(), x.end(), x.begin(), :: toupper);
+    cout << x << endl;
+}
+using namespace std;
+int main() {
+    string x; cin >> x;
+    int upper = 0, lower = 0;
+    for (char ch : x) {
+        if (isupper(ch)) upper++;
+        else lower++;
+    }
+    if (lower >= upper)
+        transform(x.begin(), x.end(), x.begin(), ::tolower);
+    else
+        transform(x.begin(), x.end(), x.begin(), ::toupper);
+    cout << x << '\n';
+    return 0;
+}
+
+using namespace std;
 http://codeforces.com/problemset/problem/61/A
 // Ultra-Fast Mathematician
 int main() {
@@ -1932,6 +2620,26 @@ int main(){
     cout << s1 << endl;
     return 0;
 }
+using namespace std;
+int main(){
+    string a, b, c; cin >> a >> b;
+    int n = a.length();
+    for(int i = 0; i < n; i++){
+        if( (a[i] == '1' && b[i] == '0') || (a[i] == '0' && b[i] == '1') )
+            c += '1';
+        else    c += '0';
+    }
+    cout << c << endl;
+}
+using namespace std;
+int main() {
+    string a, b; cin >> a >> b;
+    string result;
+    for (size_t i = 0; i < a.length(); ++i)
+        result += (a[i] == b[i]) ? '0' : '1';
+    cout << result << '\n';
+}
+
 // Ultra-Fast Mathematician.
 #include <bits\stdc++.h>
 using namespace std;
