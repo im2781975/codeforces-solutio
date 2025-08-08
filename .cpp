@@ -2133,7 +2133,17 @@ int main() {
 
     return 0;
 }
-
+using namespace std;
+int main(){
+    int t; cin >> t;
+    int a = 0, b = 0, c = 0, x, y, z;
+    for(int i = 0; i < t; i++){
+        cin >> x >> y >> z;
+        a += x; b += y; c += z;
+    }
+    cout << ((a == 0 && b == 0 && c == 0) ? "YES" : "NO") << '\n';
+    return 0;
+}
 using namespace std;
 // A. Way Too Long Words
 // problemset/problem/71/A
