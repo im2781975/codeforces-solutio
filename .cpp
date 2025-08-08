@@ -1,3 +1,50 @@
+https://codeforces.com/problemset/problem/1/C
+// C. Ancient Berland Circus
+using namespace std;
+const double PI = acos(-1.0);
+const double EPS = 1e-6;
+double dist(double x1, double y1, double x2, double y2) {
+    return hypot(x1 - x2, y1 - y2);
+}
+double angle(double x1, double y1, double x2, double y2, double x3, double y3) {
+    // returns angle between vectors (x2-x1,y2-y1) and (x3-x1,y3-y1)
+    double a = dist(x1, y1, x2, y2);
+    double b = dist(x1, y1, x3, y3);
+    double c = dist(x2, y2, x3, y3);
+    return acos((a * a + b * b - c * c) / (2 * a * b));
+}
+int main() {
+    double x[3], y[3];
+    for (int i = 0; i < 3; i++)
+        cin >> x[i] >> y[i];
+    // Calculate circumcenter using perpendicular bisectors
+    double x1 = x[0], y1 = y[0];
+    double x2 = x[1], y2 = y[1];
+    double x3 = x[2], y3 = y[2];
+
+    double d = 2 * (x1*(y2 - y3) + x2*(y3 - y1) + x3*(y1 - y2));
+    double X = ((x1*x1 + y1*y1)*(y2 - y3) + (x2*x2 + y2*y2)*(y3 - y1) + (x3*x3 + y3*y3)*(y1 - y2)) / d;
+    double Y = ((x1*x1 + y1*y1)*(x3 - x2) + (x2*x2 + y2*y2)*(x1 - x3) + (x3*x3 + y3*y3)*(x2 - x1)) / d;
+    double R = dist(X, Y, x1, y1); // radius
+    // Compute the three angles at the center
+    double a1 = angle(X, Y, x[0], y[0], x[1], y[1]);
+    double a2 = angle(X, Y, x[1], y[1], x[2], y[2]);
+    double a3 = angle(X, Y, x[2], y[2], x[0], y[0]);
+    // Find smallest angle that fits all 3 as multiples of it
+    double total = a1 + a2 + a3;
+    int n = 3;
+    for (int i = 3; i <= 100; i++) {
+        double angle = 2 * PI / i;
+        if (fabs(fmod(a1, angle)) < EPS &&
+            fabs(fmod(a2, angle)) < EPS &&
+            fabs(fmod(a3, angle)) < EPS) {
+            n = i;
+            break;
+        }
+    }
+    double area = 0.5 * n * R * R * sin(2 * PI / n);
+    cout << fixed << setprecision(10) << area << endl;
+}
 https://codeforces.com/problemset/problem/2/A
 // A. Winner
 using namespace std;
