@@ -2096,6 +2096,48 @@ int main() {
     cout << totalValue << "\n";
     return 0;
 }
+
+using namespace std;
+int main(){
+    int n, m; cin >> n >> m;
+    multimap <int, int, greater<int>> marr;
+    int x, y;
+    for(int i = 0; i < m; i++){
+        cin >> x >> y;
+        marr.insert(pair <int, int> (y, x));
+    }
+    multimap <int, int> ::iterator itr;
+    int count = 0, sum = 0;
+    for (itr = marr.begin(); itr != marr.end(); ++itr){
+        count += itr->second;
+        if(count >= n){
+            itr->second = itr->second - (count - n);
+            sum += itr->first * itr->second;
+            break;
+        }
+        sum += itr->first * itr->second;
+    }
+    cout << sum << endl;
+}
+using namespace std;
+int main() {
+    int n, m; cin >> n >> m;
+    vector<pair<int, int>> bags(m);
+    for (auto &bag : bags) {
+        cin >> bag.second >> bag.first;
+    }
+    sort(bags.rbegin(), bags.rend());
+    long long totalCoins = 0;
+    for (auto &[coinsPerBag, bagCount] : bags) {
+        int take = min(n, bagCount);
+        totalCoins += 1LL * take * coinsPerBag;
+        n -= take;
+        if (n == 0) break;
+    }
+    cout << totalCoins << '\n';
+    return 0;
+}
+
 https://codeforces.com/problemset/problem/17/A
 // A. Noldbach problem
 using namespace std;
@@ -2469,6 +2511,38 @@ int main() {
     }
     cout << count << endl;
 }
+using namespace std;
+int main(){
+    int n, amount = 0; cin >> n;
+    bool b[3001] = {false};
+    int pfactors[3001] = {0};
+    for (int i = 2; i <= n; ++i){
+        if (!b[i]){
+            for (int j = i + i; j <= n; j += i){
+                b[j] = true;
+                pfactors[j] += 1;
+            }
+        }
+        if (pfactors[i] == 2)    amount += 1;
+    }
+    cout << amount;
+    return 0;
+}
+using namespace std;
+int main() {
+    int n, count = 0; cin >> n;
+    vector<int> pfactors(n + 1, 0);
+    for (int i = 2; i <= n; ++i) {
+        if (pfactors[i] == 0) {
+            for (int j = i; j <= n; j += i)
+                pfactors[j]++;
+        }
+        if (pfactors[i] == 2)
+            count++;
+    }
+    cout << count << '\n';
+    return 0;
+}
 
 using namespace std;
 // problemset/problem/26/B
@@ -2735,6 +2809,39 @@ int main() {
     cout << endl;
 }
 
+using namespace std;
+#define ll long long
+#define endl '\n'
+#define debug(n) cout<<(n)<<endl;
+const ll INF = 2e18 + 99;
+int main(){
+    string s, res = ""; cin >> s;
+    for(int i = 0; i < s.length(); i++){
+        if(s[i] == '.')    res += '0';
+        else if(s[i] == '-'){
+            i++;
+            if(s[i] == '.')    res += '1';
+            else    res += '2';
+        }
+    }
+    cout << res << endl;
+}
+using namespace std;
+int main() {
+    string s, res; cin >> s;
+    for (size_t i = 0; i < s.size(); ) {
+        if (s[i] == '.') {
+            res += '0';
+            i++;
+        } else {
+            res += (s[i + 1] == '.') ? '1' : '2';
+            i += 2;
+        }
+    }
+    cout << res << '\n';
+    return 0;
+}
+
 https://codeforces.com/problemset/problem/34/A
 // A. Reconnaissance 2
 using namespace std;
@@ -2877,6 +2984,35 @@ int main() {
         sum -= negative_values[i];
     }
     cout << sum << '\n';
+}
+
+using namespace std;
+#define ll long long
+#define endl '\n'
+#define debug(n) cout<<(n)<<endl;
+const ll INF = 2e18 + 99;
+int main(){
+    int n, m; cin >> n >> m;
+    int arr[n];
+    for(int i = 0; i < n; i++)    cin >> arr[i];
+    sort(arr, arr + n);
+    int count = 0;
+    for(int i = 0; i < m; i++){
+        if(arr[i] < 0)    count -= arr[i];
+    }
+    cout << count << endl;
+}
+using namespace std;
+int main() {
+    int n, m; cin >> n >> m;
+    vector<int> arr(n);
+    for (int &x : arr) cin >> x;
+    sort(arr.begin(), arr.end());
+    int total = 0;
+    for (int i = 0; i < m && arr[i] < 0; i++) 
+        total -= arr[i];
+    cout << total << '\n';
+    return 0;
 }
 
 https://codeforces.com/problemset/problem/35/A
@@ -3233,6 +3369,29 @@ int main(){
         }
     }
     cout << t << endl;
+}
+using namespace std;
+#define ll long long
+#define endl '\n'
+#define debug(n) cout<<(n)<<endl;
+const ll INF = 2e18 + 99;
+int main(){
+    int n; cin >> n;
+    map <string, int> mp;
+    while(n--) {
+        string s; cin >> s;
+        mp[s]++;
+    }
+    int max = -1;
+    string maxchar;
+    map <string, int>::iterator i;
+    for(i = mp.begin(); i != mp.end(); i++){
+        if(max < i->second){
+            max = i->second;
+            maxchar = i->first;
+        }
+    }
+    cout << maxchar << endl;
 }
 https://codeforces.com/problemset/problem/43/B
 // B. Letter
@@ -3737,6 +3896,37 @@ int main() {
     cout << (k == target.size() ? "YES" : "NO") << endl;
 }
 
+using namespace std;
+#define ll long long
+#define endl '\n'
+#define debug(n) cout<<(n)<<endl;
+const ll INF = 2e18 + 99;
+int main(){
+    string s, r = ""; cin >> s;
+    for(auto i : s){
+        if(i == 'h' && r == "")    r += i;
+        else if(i == 'e' && r[r.length() - 1] == 'h')    r += i;
+        else if(i == 'l' && r[r.length() - 1] == 'e')    r += i;
+        else if(i == 'l' && r[r.length() - 2] == 'e' && r[r.length() - 1] == 'l')    r += i;
+        else if(i == 'o' && r[r.length() - 1] == 'l' && r[r.length() - 2] == 'l' && r[r.length() - 3] == 'e')    r += i;
+    }
+    (r == "hello") ? cout << "YES" << endl : cout<<"NO"<<endl;
+}
+using namespace std;
+int main() {
+    string s; cin >> s;
+    string target = "hello";
+    int idx = 0;
+    for (char c : s) {
+        if (c == target[idx]) {
+            idx++;
+            if (idx == target.size()) break;
+        }
+    }
+    cout << (idx == target.size() ? "YES\n" : "NO\n");
+    return 0;
+}
+
 #include <iostream>
 https://codeforces.com/problemset/problem/58/B
 // B. Coins
@@ -3920,7 +4110,20 @@ int main() {
     cout << x << '\n';
     return 0;
 }
-
+using namespace std;
+int main(){
+    string s; cin >> s;
+    int low = 0, up = 0;
+    for(int i = 0; i < s.size(); i++){
+        if(s[i] >= 97)    low++;
+        else    up++;
+    }
+    if(low >= up)
+        transform(s.begin() , s.end(), s.begin(), ::tolower);
+    else
+        transform(s.begin(), s.end(), s.begin(), ::toupper);
+    cout << s;
+}
 using namespace std;
 http://codeforces.com/problemset/problem/61/A
 // Ultra-Fast Mathematician
@@ -3974,7 +4177,7 @@ int main() {
         result += (a[i] == b[i]) ? '0' : '1';
     cout << result << '\n';
 }
-
+https://codeforces.com/problemset/problem/61/A
 // Ultra-Fast Mathematician.
 #include <bits\stdc++.h>
 using namespace std;
@@ -4002,6 +4205,23 @@ int main() {
     }
 
     cout << result << endl;
+    return 0;
+}
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    string a, b;
+    cin >> a >> b;
+
+    string r;
+    r.reserve(a.size());
+
+    for (size_t i = 0; i < a.size(); ++i) {
+        r.push_back(((a[i] - '0') ^ (b[i] - '0')) + '0');
+    }
+
+    cout << r << '\n';
     return 0;
 }
 
@@ -4241,6 +4461,29 @@ int main(){
     }
     cout << ((a == 0 && b == 0 && c == 0) ? "YES" : "NO") << '\n';
     return 0;
+}
+using namespace std;
+#define ll long long
+#define endl '\n'
+#define debug(n) cout<<(n)<<endl;
+const ll INF = 2e18 + 99;
+int main(){
+    int n; cin >> n;
+    int arr[n][3];
+    for(int i = 0; i < n; i++)
+        cin >> arr[i][0] >> arr[i][1] >> arr[i][2];
+
+    int sum = 0;
+    for(int i = 0; i < 3; i++){
+        sum = 0;
+        for(int j = 0; j < n; j++)
+            sum += arr[j][i];
+        if(sum){
+            cout<<"NO"<<endl;
+            return 0;
+        }
+    }
+    cout << "YES" << endl;
 }
 using namespace std;
 // A. Way Too Long Words
@@ -4848,6 +5091,35 @@ int main()
 
     return 0;
 }
+https://codeforces.com/problemset/problem/80/A
+// A. Panoramix's Prediction
+using namespace std;
+#define ll long long
+#define endl '\n'
+#define debug(n) cout<<(n)<<endl;
+const ll INF = 2e18 + 99;
+bool prime_check(int m){
+    if(m % 2 == 0)    return false;
+    bool check = true;
+    for(int i = 2; i*i <= m; i++){
+        if(m % i == 0){
+            check = false;
+            break;
+        }
+    }
+    return check;
+}
+int main(){
+    int n, m; cin >> n >> m;
+    int real_m;
+    for(int i = n + 1; i <= m; i++){
+        if(prime_check(i)){
+            real_m = i;
+            break;
+        }
+    }
+    (real_m == m) ? cout<<"YES"<<endl : cout<<"NO"<<endl;
+}
 https://codeforces.com/problemset/problem/81/A
 // A. Plug-in
 using namespace std;
@@ -4864,6 +5136,41 @@ int main() {
         }
     }
     cout << result << endl;
+    return 0;
+}
+using namespace std;
+#define ll long long
+#define endl "\n"
+#define debug(n) cout<<(n)<<endl;
+#define pb push_back
+const ll INF = 2e18 + 99;
+int main(){
+    stack <char> st;
+    string s; cin >> s;
+    for(int i = s.size() - 1; i >= 0; i--){
+        if(!st.empty() && st.top() == s[i])
+            st.pop();
+        else
+            st.push(s[i]);
+    }
+    string ans = "";
+    while(!st.empty()){
+        ans.push_back(st.top());
+        st.pop();
+    }
+    cout << ans << endl;
+}
+using namespace std;
+int main() {
+    string s, ans;
+    cin >> s;
+    for (char c : s) {
+        if (!ans.empty() && ans.back() == c)
+            ans.pop_back(); 
+        else
+            ans.push_back(c); 
+    }
+    cout << ans << "\n";
     return 0;
 }
 
