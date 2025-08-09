@@ -2639,6 +2639,76 @@ int main() {
         }
     }
 }
+using namespace std;
+#define ll long long
+int main() {
+    ll n; cin >> n;
+    ll arr[n], evenodd[2] = {0};
+    for(int i = 0; i < n; i++) {
+        cin >> arr[i];
+        evenodd[arr[i] % 2]++;
+    }
+    for(int i = 0; i < n; i++) {
+        if (arr[i] % 2 == ((evenodd[0] >= evenodd[1]) ? 1 : 0))
+            cout << i + 1 << " ";
+    }
+    cout << '\n';
+}
+using namespace std;
+int main(){
+    ll n, ans; cin >> n;
+    ll arr[n];
+    for(int i = 0; i < n; i++)    cin >> arr[i];
+    ll evenodd[2] = {0};
+    for(int i = 0; i < n; i++){
+        ll temp = arr[i] % 2;
+        evenodd[temp]++;
+    }
+    if (evenodd[0] >= evenodd[1])    ans = 1;
+    else    ans = 0;
+    for(int i = 0; i < n; i++){
+        if (arr[i] % 2 == ans)
+            cout << i + 1 << " ";
+    }
+}
+https://codeforces.com/problemset/problem/25/C
+// C. Roads in Berland
+using namespace std;
+int main() {
+    ll n;
+    cin >> n;
+    vector<vector<ll>> d(n, vector<ll>(n));
+    for (ll i = 0; i < n; ++i)
+        for (ll j = 0; j < n; ++j)
+            cin >> d[i][j];
+    ll k; cin >> k;
+    for (ll p = 0; p < k; ++p) {
+        ll u, v, w;
+        cin >> u >> v >> w;
+        u--, v--;
+        if (w < d[u][v]) {
+            d[u][v] = d[v][u] = w;
+
+            // Update shortest distances using the newly added edge
+            for (ll i = 0; i < n; ++i) {
+                for (ll j = 0; j < n; ++j) {
+                    d[i][j] = min({
+                        d[i][j],
+                        d[i][u] + w + d[v][j],
+                        d[i][v] + w + d[u][j]
+                    });
+                }
+            }
+        }
+        // Sum distances for pairs i > j to avoid double counting
+        ll q = 0;
+        for (ll i = 0; i < n; ++i)
+            for (ll j = 0; j < i; ++j)
+                q += d[i][j];
+        cout << q << ' ';
+    }
+    cout << '\n';
+}
 
 https://codeforces.com/problemset/problem/26/A
 // A. Almost Prime
@@ -2729,8 +2799,41 @@ int main(){
     }
     cout << cnt * 2;
 }
+https://codeforces.com/problemset/problem/26/B
+// B. Regular Bracket Sequence
+int main() {
+    string s;
+    cin >> s;
+    int cnt = 0, ans = 0;
+    for (int i = 0; i < (int)s.size(); ++i) {
+        if (s[i] == '(') {
+            ++cnt;
+        } else {
+            if (cnt != 0) {
+                ans += 2;
+                --cnt;
+            }
+        }
+    }
+    cout << ans << '\n';
+}
 https://codeforces.com/problemset/problem/27/A
 // A. Next Test
+using namespace std;
+int main() {
+    int n; cin >> n;
+    vector <int> vec(n);
+    for(int i = 0; i < n; i++) cin >> vec[i];
+    sort(vec.begin(), vec.end());
+    for(int i = 0; i < n; i++){
+        if(vec[i] != i + 1){
+            cout << i + 1;
+            return 0;
+        }
+    }
+    cout << n + 1;
+    return 0;
+}  
 using namespace std;
 int main() {
     int n, num; cin >> n;
@@ -2746,6 +2849,7 @@ int main() {
         }
     }
 }
+
 https://codeforces.com/problemset/problem/29/A
 // A. Spit Problem
 using namespace std;
@@ -2878,6 +2982,21 @@ int main() {
 }
 
 using namespace std;
+using ll = long long;
+int main() {
+    int n, d; cin >> n >> d;
+    vector <int> a(n);
+    for(int i = 0; i < n; i++)    cin >> arr[i];
+    int ans = 0;
+    for(int i = 0; i < n; i++){
+        for(int j = i + 1; j < n; j++){
+            if (abs(a[i] - a[j]) <= d)
+                ans += 2;  
+        }
+    }
+    cout << ans << '\n';
+}
+using namespace std;
 http://codeforces.com/problemset/problem/32/B
 // B. Borze
 int main() {
@@ -2973,6 +3092,21 @@ int main() {
         }
     }
     cout << endl;
+}
+int main(){
+    string input; cin >> input;
+    for(int i = 0; i < input.length(); i++) {
+        if (input[i] == '.') cout << 0;
+        else if (input[i] == '-' && input[i + 1] == '.'){
+            cout << 1;
+            i++;
+        }
+        else if (input[i] == '-' && input[i + 1] == '-'){
+            cout << 2;
+            i++;
+        }
+    }
+    return 0;
 }
 
 using namespace std;
@@ -3090,6 +3224,28 @@ int main() {
     cout << idx1 << " " << idx2 << '\n';
     return 0;
 }
+using namespace std;
+int main(){
+    int n; cin >> n;
+    int arr[2 * n];
+    for(int i = 0; i < n; i++){
+        cin >> arr[i];
+        arr[i + n] = arr[i];
+    }
+    int mindiff = INT_MAX, a1, a2;
+    for(int i = 0; i < 2 * n; i++){
+        if (abs(arr[i] - arr[i + 1]) < mindiff){
+            mindiff = abs(arr[i] - arr[i + 1]);
+            a1 = i;
+            a2 = i + 1;
+        }
+    }
+    a1 = (a1 + 1) % n, a2 = (a2 + 1) % n;
+    if (a1 == 0)    a1 = n;
+    if (a2 == 0)    a2 = n;
+    cout << a1 << " " << a2;
+    return 0;
+}
 
 https://codeforces.com/problemset/problem/34/B
 // B. Sale
@@ -3180,7 +3336,55 @@ int main() {
     cout << total << '\n';
     return 0;
 }
+using namespace std;
+int main(){
+    int n, m; cin >> n >> m;
+    vector <int> arr;
+    for(int i = 0; i < n; i++) {
+        int num; cin >> num;
+        if (num < 0)    arr.push_back(num);
+    }
+    sort(arr.begin(), arr.end());
+    int sum = 0;
+    int len = arr.size();
+    for (int i = 0; i < min(len, m); i++)
+        sum -= arr[i];
+    cout << sum << '\n';
+}
+https://codeforces.com/problemset/problem/34/C
+// C. Page Numbers
+using namespace std;
+int main() {
+    string s; cin >> s;
+    s += ',';
+    vector <int> vec;
+    string temp;
+    for (char c : s) {
+        if (c == ',') {
+            if (!temp.empty()) {
+                vec.pb(stoll(temp));
+                temp.clear();
+            }
+        } else    temp += c;
+    }
+    sort(vec.begin(), vec.end());
+    vec.erase(unique(vec.begin(), vec.end()), vec.end());
 
+    int start = vec[0], end = vec[0];
+    for (int i = 1; i < sz(vec); i++) {
+        if (vec[i] == end + 1)    end = vec[i];
+         else {
+            if (start == end)    cout << start << ",";
+            else    cout << start << "-" << end << ",";
+            start = end = vec[i];
+        }
+    }
+    if (start == end)
+        cout << start;
+    else
+        cout << start << "-" << end;
+    cout << "\n";
+}
 https://codeforces.com/problemset/problem/35/A
 // A. Shell Game
 using namespace std;
