@@ -3767,7 +3767,43 @@ int main() {
 
     return 0;
 }
+#include <bits/stdc++.h>
+https://codeforces.com/problemset/problem/49/B
+// B.SUM
+using namespace std;
+using ll = long long;
+string sumBaseB(string a, string b, ll base) {
+    // Pad the shorter string with leading zeros
+    if (a.size() < b.size()) a.insert(0, b.size() - a.size(), '0');
+    else if (b.size() < a.size()) b.insert(0, a.size() - b.size(), '0');
 
+    string result;
+    int carry = 0;
+    for (int i = (int)a.size() - 1; i >= 0; --i) {
+        int curr = carry + (a[i] - '0') + (b[i] - '0');
+        carry = curr / base;
+        curr %= base;
+        result.push_back(char(curr + '0'));
+    }
+    if (carry > 0) result.push_back(char(carry + '0'));
+
+    reverse(result.begin(), result.end());
+    return result;
+}
+
+int main() {
+    ll a, b;
+    cin >> a >> b;
+    string A = to_string(a), B = to_string(b);
+
+    // Find max digit in both numbers
+    int maxDigit = 0;
+    for (char c : A) maxDigit = max(maxDigit, c - '0');
+    for (char c : B) maxDigit = max(maxDigit, c - '0');
+
+    ll base = maxDigit + 1;
+    cout << sumBaseB(A, B, base).size() << '\n';
+}
 https://codeforces.com/problemset/problem/50/A
 // A. Domino piling
 using namespace std;
@@ -3815,6 +3851,8 @@ int main(){
     return 0;
 }
 
+
+
 https://codeforces.com/problemset/problem/53/A
 // A. Autocomplete
 using namespace std;
@@ -3829,6 +3867,46 @@ int main(){
 			v.push_back(str);
 	}
 	cout << (v.size() > 0 ? *min_element(v.begin(), v.end()) : s);
+}
+
+using namespace std;
+int main(){
+    string s; cin >> s;
+    int n; cin >> n;
+    vector<string> vec(n);
+    for(int i = 0; i < n; i++) cin >> vec[i];
+    sort(vec.begin(), vec.end());
+    for(int i = 0; i < n; i++){
+        if (vec[i].substr(0, s.length()) == s){
+            cout << vec[i];
+            return 0;
+        }
+    }
+    cout << s;
+}
+using namespace std;
+using ll = long long;
+void solve() {
+    string s; cin >> s;
+    ll n; cin >> n;
+    vector<string> vec(n);
+    for (ll i = 0; i < n; i++) cin >> vec[i];
+    sort(vec.begin(), vec.end());
+    for (const auto& word : vec) {
+        if (word.compare(0, s.size(), s) == 0) {
+            cout << word << '\n';
+            return;
+        }
+    }
+    cout << s << '\n';
+}
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    solve();
+
+    return 0;
 }
 https://codeforces.com/problemset/problem/57/A
 using namespace std;
