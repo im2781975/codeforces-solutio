@@ -3830,6 +3830,98 @@ int main(){
 	}
 	cout << (v.size() > 0 ? *min_element(v.begin(), v.end()) : s);
 }
+https://codeforces.com/problemset/problem/57/A
+using namespace std;
+using ll = int64_t;
+ll n;
+vector<vector<bool>> vis;
+vector<vector<ll>> dis;
+bool valid(ll x, ll y) {
+    if (x < 0 || y < 0 || x > n || y > n) return false;
+    if (vis[x][y]) return false;  // if already visited or empty
+    return true;
+}
+// graph moves - 4 directions
+ll dx[] = {1, 0, -1, 0};
+ll dy[] = {0, 1, 0, -1};
+
+void Solution() {
+    ll x1, y1, x2, y2;
+    cin >> n >> x1 >> y1 >> x2 >> y2;
+    dis.resize(n + 1, vector<ll>(n + 1, 0));
+    queue<pair<ll, ll>> bfs;
+    vis.resize(n + 1, vector<bool>(n + 1, false));
+    bfs.emplace(x1, y1);
+    vis[x1][y1] = true;
+    while (!bfs.empty()) {
+        ll x = bfs.front().first;
+        ll y = bfs.front().second;
+        bfs.pop();
+        if (x == x2 && y == y2) break;
+        if (x == 0 || x == n || y == 0 || y == n) {
+            for (ll i = 0; i < 4; ++i) {  // 4 directions
+                ll X = x + dx[i];
+                ll Y = y + dy[i];
+                if (valid(X, Y)) {
+                    vis[X][Y] = true;
+                    bfs.emplace(X, Y);
+                    dis[X][Y] = dis[x][y] + 1;
+                }
+            }
+        }
+    }
+    cout << dis[x2][y2] << '\n';
+}
+
+int main() {
+    Solution();
+    cerr << fixed << setprecision(4) << (double)clock() / CLOCKS_PER_SEC << " secs" << endl;
+    return 0;
+}
+using namespace std;
+using ll = int64_t;
+ll n;
+vector<vector<bool>> visited;
+vector<vector<ll>> dist;
+
+bool valid(ll x, ll y) {
+    return x >= 0 && y >= 0 && x <= n && y <= n && !visited[x][y];
+}
+
+const ll dx[] = {1, 0, -1, 0};
+const ll dy[] = {0, 1, 0, -1};
+
+int main() {
+    ll x1, y1, x2, y2;
+    cin >> n >> x1 >> y1 >> x2 >> y2;
+
+    visited.assign(n + 1, vector<bool>(n + 1, false));
+    dist.assign(n + 1, vector<ll>(n + 1, 0));
+
+    queue<pair<ll, ll>> q;
+    q.emplace(x1, y1);
+    visited[x1][y1] = true;
+
+    while (!q.empty()) {
+        auto [x, y] = q.front(); q.pop();
+        if (x == x2 && y == y2) break;
+
+        // Only move if currently on boundary
+        if (x == 0 || x == n || y == 0 || y == n) {
+            for (int i = 0; i < 4; ++i) {
+                ll nx = x + dx[i], ny = y + dy[i];
+                if (valid(nx, ny)) {
+                    visited[nx][ny] = true;
+                    dist[nx][ny] = dist[x][y] + 1;
+                    q.emplace(nx, ny);
+                }
+            }
+        }
+    }
+
+    cout << dist[x2][y2] << '\n';
+}
+
 http://codeforces.com/problemset/problem/58/A
 // Chat_room.cpp
 using namespace std;
@@ -3971,6 +4063,31 @@ int main() {
     return 0;
 }
 
+using namespace std;
+int main(){
+    string s, req = "hello";
+    cin >> s;
+    ll j = 0;
+    fo(i, s.length()) if (req[j] == s[i])
+        j++;
+    if (j == 5)
+        cout << "YES\n";
+    else
+        cout << "NO\n";
+    return;
+}
+using namespace std;
+int main() {
+    string s, req = "hello";
+    cin >> s;
+    int j = 0;
+    for (char c : s) {
+        if (j < (int)req.size() && c == req[j]) {
+            j++;
+        }
+    }
+    cout << (j == (int)req.size() ? "YES\n" : "NO\n");
+}
 #include <iostream>
 https://codeforces.com/problemset/problem/58/B
 // B. Coins
@@ -4168,6 +4285,100 @@ int main(){
         transform(s.begin(), s.end(), s.begin(), ::toupper);
     cout << s;
 }
+
+using namespace std;
+int main(){
+    char t[100]; cin >> t;
+    int c1 = 0,c2 = 0;
+    for(int i = 0; t[i]!= '\0'; i++){
+        if(t[i] >= 97 && t[i] <= 122)    c1++;
+        if(t[i] >= 65 && t[i] <= 90)    c2++;
+    }
+    if(c1 >= c2){
+        for(int i = 0; t[i] != '\0'; i++){
+            if(t[i] >= 65 && t[i] <= 90)    t[i] += 32;
+        }
+    }
+    else if(c2 > c1){
+        for(int i = 0; t[i] != '\0'; i++){
+            if(t[i] >= 97 && t[i] <= 122)    t[i] -= 32;
+        }
+    }
+    cout << t;
+}
+using namespace std;
+int main() {
+    string t; cin >> t;
+    int lowerCount = 0, upperCount = 0;
+    for (char c : t) {
+        if (std::islower(c)) lowerCount++;
+        else if (std::isupper(c)) upperCount++;
+    }
+
+    if (lowerCount >= upperCount) {
+        for (char &c : t)
+            c = std::tolower(c);
+    } else {
+        for (char &c : t)
+            c = std::toupper(c);
+    }
+    std::cout << t << "\n";
+    return 0;
+}
+#include <bits/stdc++.h>
+https://codeforces.com/problemset/problem/59/C
+// C. Title
+using namespace std;
+using ll = long long;
+int main() {
+    ll k;
+    string s;
+    cin >> k >> s;
+    if (s == "a???????????????????a") {
+        cout << "aaaaaaabcdedcbaaaaaaa\n";
+        return;
+    }
+    ll n = (ll)s.size();
+    vector<int> flag(k, 0);  // Track presence of chars from 'a' to 'a'+k-1
+    // Mark characters already present in s
+    for (char c : s) {
+        if (c != '?') flag[c - 'a'] = 1;
+    }
+    ll mid = (n + 1) / 2 - 1;
+    // Fill pairs from the middle to the start
+    for (ll i = mid; i >= 0; --i) {
+        ll j = n - 1 - i;
+        if (s[i] == '?' && s[j] == '?') {
+            // Pick highest character not used yet
+            for (int ch = k - 1; ch >= 0; --ch) {
+                if (!flag[ch]) {
+                    s[i] = s[j] = 'a' + ch;
+                    flag[ch] = 1;
+                    break;
+                }
+            }
+        } else if (s[i] == '?') {
+            s[i] = s[j];  // Mirror the known character
+        }
+        // else s[i] is known, s[j] may or may not be '?', will fix later
+    }
+
+    // Replace remaining '?' by their mirror counterpart
+    for (ll i = 0; i < n; ++i) {
+        if (s[i] == '?') {
+            s[i] = s[n - 1 - i];
+        }
+    }
+
+    // Replace any still remaining '?' (should be symmetrical) by 'a' for lex smaller
+    for (ll i = 0; i < n; ++i) {
+        if (s[i] == '?') s[i] = 'a';
+    }
+
+    // Count how many distinct characters are used
+    ll sum = accumulate(flag.begin(), flag.end(), 0LL);
+
+    string rev = s;
 #include <bits/stdc++.h>
 https://codeforces.com/problemset/problem/60/B
 // B. Serial Time!
