@@ -1950,7 +1950,15 @@ int main(){
     }
     printf(strcmp(m, digit) == 0 ? "OK\n" : "WRONG_ANSWER\n");
 }
-
+using namespace std;
+int main() {
+    string n, m; cin >> n >> m;
+    sort(n.begin(), n.end());
+    while (n.size() > 1 && n[0] == '0') {
+        next_permutation(n.begin(), n.end());
+    }
+    cout << ((n == m) ? "OK" : "WRONG_ANSWER") << '\n';
+}
 https://codeforces.com/problemset/problem/13/A
 // A. Numbers
 using namespace std;
@@ -2253,9 +2261,123 @@ int main(){
     else    cout << "NO";
     return 0;
 }
+https://codeforces.com/problemset/problem/18/C
+// C. Stripe
+using namespace std;
+using ll = long long;
+int main() {
+    ll n; cin >> n;
+    vector<ll> a(n), pref(n);
+    for (ll &A : a) cin >> A;
+    partial_sum(a.begin(), a.end(), pref.begin());
+    ll ans = 0;
+    for (ll i = 0; i < n - 1; ++i) {
+        if (2 * pref[i] == pref[n - 1]) ans++;
+    }
+    cout << ans << '\n';
+}
+https://codeforces.com/problemset/problem/20/A
+A. BerOS file system
+using namespace std;
+using ll = long long;
+int main() {
+    string temp = "", a;
+    vector<string> vv;
+    cin >> a;
+    // Split string by '/'
+    for (ll i = 0; i < (ll)a.size(); ++i) {
+        if (a[i] != '/')
+            temp += a[i];
+        else {
+            if (!temp.empty()) vv.push_back(temp);
+            temp.clear();
+        }
+    }
+    if (!temp.empty()) vv.push_back(temp);
+    cout << "/";
+    for (ll i = 0; i < (ll)vv.size(); ++i) {
+        cout << vv[i];
+        if (i != (ll)vv.size() - 1) cout << "/";
+    }
+    cout << "\n";
+}
+https://codeforces.com/problemset/problem/20/B
+// B. Equation
+using namespace std;
+using ll = long long;
+int main() {
+    cout << fixed << setprecision(12);
+    ll a, b, c; cin >> a >> b >> c;
+    if (a == 0 && b == 0 && c == 0) {
+        cout << "-1\n";
+        return;
+    }
+    // Linear equation: bx + c = 0
+    if (a == 0) {
+        if (b != 0) {
+            cout << "1\n";
+            cout << (-c + 0.0) / (b + 0.0) << '\n';
+        } else {
+            cout << "0\n"; // No solution if b == 0 and c != 0
+        }
+        return;
+    }
+    ll d = b * b - 4 * a * c;
+    if (d < 0) { 
+        cout << "0\n";
+        return;
+    }
+    vector<double> ans;
+    ans.push_back((-b + sqrt(d + 0.0)) / (2.0 * a));
+    if (d > 0) ans.push_back((-b - sqrt(d + 0.0)) / (2.0 * a));
 
+    sort(ans.begin(), ans.end());
+    cout << ans.size() << '\n';
+    for (auto x : ans) cout << x << '\n';
+}
 https://codeforces.com/problemset/problem/20/C
 // C. Dijkstra?
+using namespace std;
+using ll = long long;
+const ll INF = 1e18;
+int main() {
+    ll n, m, u, v, w;
+    cin >> n >> m;
+    vector<vector<pair<ll, ll>>> adj(n);
+    for (ll i = 0; i < m; ++i) {
+        cin >> u >> v >> w;
+        adj[u - 1].emplace_back(v - 1, w);
+        adj[v - 1].emplace_back(u - 1, w);
+    }
+    vector<ll> dist(n, INF), pred(n, -1);
+    dist[0] = 0;
+
+    set<pair<ll, ll>> s;
+    s.insert({0, 0});
+    while (!s.empty()) {
+        ll from = s.begin()->second;
+        s.erase(s.begin());
+        for (auto &[to, len] : adj[from]) {
+            if (dist[to] > dist[from] + len) {
+                s.erase({dist[to], to});
+                dist[to] = dist[from] + len;
+                pred[to] = from;
+                s.insert({dist[to], to});
+            }
+        }
+    }
+    if (dist[n - 1] == INF) {
+        cout << -1 << '\n';
+        return;
+    }
+    vector<ll> path;
+    for (ll X = n - 1; X != -1; X = pred[X]) {
+        path.push_back(X);
+    }
+    reverse(path.begin(), path.end());
+    for (ll x : path) cout << x + 1 << ' ';
+    cout << '\n';
+}
 using namespace std;
 typedef long long ll;
 const ll INF = 1e18;
@@ -3228,6 +3350,40 @@ int main(){
     if(tag == 1)    cout << "YES" << endl;
     else    cout << "NO" << endl;
 }
+#include <bits/stdc++.h>
+https://codeforces.com/problemset/problem/41/C
+// C. Email address
+using namespace std;
+int main() {
+    string s, res; cin >> res;
+    cin >> s;
+    // Replace "dot" with "."
+    s = regex_replace(s, regex("dot"), ".");
+    // Replace first "at" with "@"
+    size_t pos = s.find("at");
+    if (pos != string::npos) {
+        s.replace(pos, 2, "@");
+    }
+    // Special handling if starts with "@"
+    if (!s.empty() && s[0] == '@') {
+        s = s.substr(1);
+        pos = s.find("at");
+        if (pos != string::npos) {
+            s.replace(pos, 2, "@");
+        }
+        s = "at" + s;
+    }
+    // Handle special cases with leading/trailing '.'
+    if (!s.empty() && s.front() == '.' && s.back() == '.')
+        res = "dot" + s.substr(1, s.size() - 2) + "dot";
+    else if (!s.empty() && s.front() == '.')
+        res = "dot" + s.substr(1);
+    else if (!s.empty() && s.back() == '.')
+        res = s.substr(0, s.size() - 1) + "dot";
+    else    res = s;
+        res = s;
+    cout << res << '\n';
+}
 using namespace std;
 https://codeforces.com/contest/43/problem/B
 // 43B. Letter
@@ -3512,7 +3668,53 @@ int main() {
     cout << (possible ? "YES" : "NO") << '\n';
     return 0;
 }
-
+using namespace std;
+#define ll long long
+int main() {
+    string base, need;
+    getline(cin, base);
+    getline(cin, need);
+    map<char, ll> counts;
+    for (char c : base) {
+        if (isalpha(c))
+            counts[c] += 1;
+    }
+    bool ok = true;
+    for (char c : need) {
+        if (isalpha(c)) {
+            auto it = counts.find(c);
+            if (it == counts.end()) {
+                ok = false;
+                break;
+            }
+            if (it->second == 1)    counts.erase(it);
+            else    it->second -= 1;
+        }
+    }
+    if(ok)    cout << "YES";
+    else    cout << "NO";
+}  
+using namespace std;
+int main(){
+    string s1, s2;
+    getline(cin, s1);
+    getline(cin, s2);
+    ll count1[58] = {}, count2[58] = {};
+    for (ll i = 0; i < s1.length(); i++){
+        if (s1[i] != ' ') count1[s1[i] - 65]++;
+    }
+    for (ll i = 0; i < s2.length(); i++){
+        if (s2[i] != ' ')
+            count2[s2[i] - 65]++;
+    }
+    for (ll i = 0; i < 58; i++) {
+        if (count1[i] < count2[i]) {
+            cout << "NO\n";
+            return 0;
+        }
+    }
+    cout << "YES\n";
+}
 https://codeforces.com/problemset/problem/44/A
 // A. Indian Summer
 using namespace std;
