@@ -1584,6 +1584,50 @@ int main() {
     return 0;
 }
 
+using namespace std;
+using ll = long long;
+ll n, m;
+char ch;
+vector<vector<char>> vv;
+set<char> colors;
+
+void checkNeighbor(ll i, ll j) {
+    if (vv[i][j] != '.' && vv[i][j] != ch) {
+        colors.insert(vv[i][j]);
+    }
+}
+
+void Solution() {
+    cin >> n >> m >> ch;
+    vv.assign(n + 4, vector<char>(m + 4, '.'));
+
+    for (ll i = 1; i <= n; ++i)
+        for (ll j = 1; j <= m; ++j)
+            cin >> vv[i][j];
+
+    for (ll i = 1; i <= n; ++i) {
+        for (ll j = 1; j <= m; ++j) {
+            if (vv[i][j] == ch) {
+                checkNeighbor(i + 1, j);
+                checkNeighbor(i - 1, j);
+                checkNeighbor(i, j + 1);
+                checkNeighbor(i, j - 1);
+            }
+        }
+    }
+
+    cout << (int)colors.size() << '\n';
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    Solution();
+
+    return 0;
+}
+
 https://codeforces.com/problemset/problem/6/C
 // C. Alice, Bob and Chocolate
 using namespace std;
@@ -4124,6 +4168,50 @@ int main(){
         transform(s.begin(), s.end(), s.begin(), ::toupper);
     cout << s;
 }
+#include <bits/stdc++.h>
+https://codeforces.com/problemset/problem/60/B
+// B. Serial Time!
+using namespace std;
+using ll = int64_t;
+int main() {
+    ll k, n, m;
+    cin >> k >> n >> m;
+
+    vector<vector<vector<char>>> grid(k, vector<vector<char>>(n, vector<char>(m)));
+    vector<vector<vector<bool>>> visited(k, vector<vector<bool>>(n, vector<bool>(m, false)));
+
+    for (ll z = 0; z < k; ++z)
+        for (ll x = 0; x < n; ++x)
+            for (ll y = 0; y < m; ++y)
+                cin >> grid[z][x][y];
+
+    ll startX, startY;
+    cin >> startX >> startY;
+    --startX; --startY;
+
+    // Directions in 3D: x, y, z
+    array<ll, 6> dx = {1, -1, 0, 0, 0, 0};
+    array<ll, 6> dy = {0, 0, 1, -1, 0, 0};
+    array<ll, 6> dz = {0, 0, 0, 0, 1, -1};
+
+    auto valid = [&](ll z, ll x, ll y) {
+        return z >= 0 && z < k && x >= 0 && x < n && y >= 0 && y < m &&
+               !visited[z][x][y] && grid[z][x][y] != '#';
+    };
+
+    ll reachable = 0;
+    function<void(ll, ll, ll)> dfs = [&](ll z, ll x, ll y) {
+        visited[z][x][y] = true;
+        reachable++;
+        for (int i = 0; i < 6; ++i) {
+            ll nz = z + dz[i], nx = x + dx[i], ny = y + dy[i];
+            if (valid(nz, nx, ny)) dfs(nz, nx, ny);
+        }
+    };
+
+    dfs(0, startX, startY);
+    cout << reachable << '\n';
+}
 using namespace std;
 http://codeforces.com/problemset/problem/61/A
 // Ultra-Fast Mathematician
@@ -4563,6 +4651,39 @@ int main()
     }
     return 0;
 }
+https://codeforces.com/problemset/problem/73/A
+A. The Elder Trolls IV: Oblivon
+using namespace std;
+using ll = long long;
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    vector<ll> d(3);
+    ll k;
+    cin >> d[0] >> d[1] >> d[2] >> k;
+
+    sort(d.begin(), d.end());
+
+    ll total_max = d[0] + d[1] + d[2] - 3;
+    if (k >= total_max) {
+        cout << (d[0] * d[1] * d[2]) << '\n';
+        return 0;
+    }
+
+    ll c1 = min(d[0] - 1, k / 3);
+    k -= c1;
+
+    ll c2 = min(d[1] - 1, k / 2);
+    k -= c2;
+
+    ll c3 = min(d[2] - 1, k);
+
+    cout << (c1 + 1) * (c2 + 1) * (c3 + 1) << '\n';
+
+    return 0;
+}
+
 https://codeforces.com/problemset/problem/74/A
 // A. Room Leader
 using namespace std;
@@ -4790,6 +4911,65 @@ int main() {
         cout << "YES\n";
     else
         cout << "NO\n";
+}
+#include <iostream>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+void solve() {
+    long long a, b;
+    cin >> a >> b;
+    long long sum = a + b;
+
+    auto remove_zeros = [](string s) {
+        s.erase(remove(s.begin(), s.end(), '0'), s.end());
+        return s;
+    };
+
+    string sa = remove_zeros(to_string(a));
+    string sb = remove_zeros(to_string(b));
+    string ssum = remove_zeros(to_string(sum));
+
+    long long a1 = stoll(sa);
+    long long b1 = stoll(sb);
+    long long sum1 = stoll(ssum);
+
+    cout << (a1 + b1 == sum1 ? "YES\n" : "NO\n");
+}
+https://codeforces.com/problemset/problem/75/C
+// C. Modified GCD
+using namespace std;
+using ll = long long;
+ll a, b, l, r, g, q;
+vector<ll> divisors;
+int main() {
+    cin >> a >> b;
+    g = gcd(a, b);
+    // Find all divisors of g
+    for (ll i = 1; i * i <= g; ++i) {
+        if (g % i == 0) {
+            divisors.push_back(i);
+            if (i != g / i)
+                divisors.push_back(g / i);
+        }
+    }
+    sort(divisors.rbegin(), divisors.rend());
+    cin >> q;
+    while (q--) {
+        cin >> l >> r;
+        // Find largest divisor <= r using binary search
+        auto it = lower_bound(divisors.begin(), divisors.end(), r, greater<ll>());
+        if (it == divisors.end()) {
+            cout << -1 << '\n';
+            continue;
+        }
+        ll val = *it;
+        if (val < l)
+            cout << -1 << '\n';
+        else
+            cout << val << '\n';
+    }
 }
 
 #include <iostream>
@@ -5120,6 +5300,68 @@ int main(){
     }
     (real_m == m) ? cout<<"YES"<<endl : cout<<"NO"<<endl;
 }
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+
+bool is_prime(ll n) {
+    if (n <= 1) return false;
+    if (n == 2) return true;
+    if (n % 2 == 0) return false;
+    for (ll i = 3; i * i <= n; i += 2)
+        if (n % i == 0)
+            return false;
+    return true;
+}
+
+void solve() {
+    ll n, m;
+    cin >> n >> m;
+
+    ll count_primes = 0;
+    ll last_prime = -1;
+
+    for (ll x = n + 1; x <= m; x++) {
+        if (is_prime(x)) {
+            count_primes++;
+            last_prime = x;
+        }
+    }
+
+    // If there is exactly one prime between n and m and it's equal to m
+    if (count_primes == 1 && last_prime == m)
+        cout << "YES\n";
+    else
+        cout << "NO\n";
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    solve();
+    return 0;
+}
+https://codeforces.com/problemset/problem/80/B
+// B. Depression
+using namespace std;
+
+int main() {
+    string s;
+    cin >> s;  // input like "09:30"
+    
+    int h = stoi(s.substr(0, 2));
+    int m = stoi(s.substr(3, 2));
+    
+    h %= 12;
+    double hour_angle = 30.0 * h + 0.5 * m;
+    double minute_angle = 6.0 * m;
+    
+    cout << fixed << setprecision(1) << hour_angle << " ";
+    cout << fixed << setprecision(0) << minute_angle << "\n";
+}
+
 https://codeforces.com/problemset/problem/81/A
 // A. Plug-in
 using namespace std;
@@ -5440,6 +5682,15 @@ int main() {
         else    count = 1;
     }
     cout << (danger ? "YES" : "NO") << endl;
+}
+using namespace std;
+int main(){
+    string s; cin >> s;
+    if (s.find("1111111") != string::npos || s.find("0000000") != string::npos)
+        cout << "YES\n";
+    else
+        cout << "NO\n";
+    return;
 }
 https://codeforces.com/problemset/problem/96/A
 // A. Football
