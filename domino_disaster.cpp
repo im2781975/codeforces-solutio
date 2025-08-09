@@ -1,5 +1,6 @@
 #include<iostream>
 #include<string>
+https://codeforces.com/problemset/problem/1367/A
 using namespace std;
 
 int main(){
